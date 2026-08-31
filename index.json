@@ -1,7 +1,35 @@
 {
   "_generated": "Built from apps/*.yaml by scripts/build-index.mjs - do not edit.",
   "schema": 1,
-  "apps": [],
+  "apps": [
+    {
+      "id": "io.lakner.hello",
+      "name": "Hello",
+      "description": "A minimal AuraOS example app — the reference for publishing to this store.",
+      "publisher": "Lukas Lakner",
+      "homepage": "https://github.com/lacky95/aura-hello",
+      "icon": "HEL",
+      "categories": [
+        "utility"
+      ],
+      "tags": [
+        "demo",
+        "example",
+        "hello"
+      ],
+      "sources": {
+        "git": {
+          "ref": "github.com/lacky95/aura-hello",
+          "default-branch": "main"
+        }
+      },
+      "channels": {
+        "stable": {
+          "git-tag": "v0.1.0"
+        }
+      }
+    }
+  ],
   "featured": [],
   "categories": [
     {

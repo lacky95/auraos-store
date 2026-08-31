@@ -3,9 +3,28 @@
 # Built from apps/*.yaml by scripts/build-index.mjs.
 # Edit the per-app file and open a PR; CI regenerates this on merge.
 #
-# apps: 0
+# apps: 1
 schema: 1
-apps: []
+apps:
+  - id: io.lakner.hello
+    name: Hello
+    description: A minimal AuraOS example app — the reference for publishing to this store.
+    publisher: Lukas Lakner
+    homepage: https://github.com/lacky95/aura-hello
+    icon: HEL
+    categories:
+      - utility
+    tags:
+      - demo
+      - example
+      - hello
+    sources:
+      git:
+        ref: github.com/lacky95/aura-hello
+        default-branch: main
+    channels:
+      stable:
+        git-tag: v0.1.0
 featured: []
 categories:
   - slug: system
