@@ -192,9 +192,19 @@
   .act:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
   .act.main { color:var(--primary); border-color:var(--primary); text-shadow:var(--glow); background:rgba(0,170,255,.12); }
   .act.main:hover { background:rgba(0,170,255,.2); color:var(--text); }
+  /* The install command IS the card's call to action, so it gets the prompt,
+     the copy button and the focus ring - not a detached button elsewhere. */
   .card-cmd { margin-top:16px; padding-top:14px; border-top:1px solid var(--border);
-    font-family:var(--mono); font-size:.8rem; color:var(--dim); word-break:break-all; }
-  .card-cmd code { color:var(--secondary); }
+    display:flex; align-items:center; gap:12px; }
+  /* The ref can be long (ghcr.io/org/aura-apps/com.example.app); it scrolls in
+     its own track rather than widening the card or wrapping mid-identifier. */
+  .cmd-text { flex:1 1 auto; min-width:0; overflow-x:auto; white-space:nowrap;
+    font-family:var(--mono); font-size:.86rem; letter-spacing:.02em; color:var(--secondary);
+    padding-bottom:2px; scrollbar-width:thin; scrollbar-color:var(--border-2) transparent; }
+  .cmd-text::-webkit-scrollbar { height:4px; }
+  .cmd-text::-webkit-scrollbar-thumb { background:var(--border-2); }
+  .cmd-text .ps1 { color:var(--primary); text-shadow:var(--glow); user-select:none; margin-right:9px; }
+  .card-cmd .copy { flex:none; }
 
   /* ── catalogue states — loading / empty / error all render as real panels,
         so a store with nothing in it still looks deliberate. ── */
@@ -468,26 +478,29 @@
 
     head.appendChild(left);
 
-    var actions = el("div", "card-actions");
     var home = safeUrl(e.homepage);
     if (home) {
+      var actions = el("div", "card-actions");
       var a = el("a", "act", "Homepage ↗");
       a.href = home; a.target = "_blank"; a.rel = "noopener noreferrer";
       actions.appendChild(a);
+      head.appendChild(actions);
     }
-    /* A web page cannot install into your OS, so the primary action is the
-       command that can — copied straight to the clipboard. */
-    var cmd = "aura nexus app install " + e.id;
-    var btn = el("button", "act main", "Copy install");
-    btn.type = "button";
-    btn.addEventListener("click", function () { copy(cmd, btn, "Copy install"); });
-    actions.appendChild(btn);
-    head.appendChild(actions);
-
     root.appendChild(head);
+
+    /* A web page cannot install into your OS, so the card shows the command
+       that can, with the copy button on the command itself. */
+    var cmd = "aura nexus app install " + e.id;
     var cmdRow = el("div", "card-cmd");
-    cmdRow.appendChild(document.createTextNode("$ "));
-    cmdRow.appendChild(el("code", null, cmd));
+    var text = el("span", "cmd-text");
+    text.appendChild(el("span", "ps1", "$"));
+    text.appendChild(el("code", null, cmd));
+    cmdRow.appendChild(text);
+    var btn = el("button", "copy", "Copy");
+    btn.type = "button";
+    btn.setAttribute("aria-label", "Copy the install command for " + e.id);
+    btn.addEventListener("click", function () { copy(cmd, btn, "Copy"); });
+    cmdRow.appendChild(btn);
     root.appendChild(cmdRow);
     return root;
   }
