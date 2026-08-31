@@ -69,7 +69,27 @@ node scripts/build-index.mjs             # regenerate index.yaml + index.json
 node scripts/build-index.mjs --check     # fail if either is stale
 ```
 
-### Hosting the page
+### Hosting
+
+The store is served by GitHub Pages from `main` at the repository root, on
+the custom domain in the `CNAME` file (**nexus.aura.lakner.io**). Because a
+custom domain moves a project site to the domain root, the index lives at
+`https://nexus.aura.lakner.io/index.yaml` - no `/auraos-store/` path segment.
+
+Two settings worth not changing by accident:
+
+- **Pages source must stay "Deploy from a branch"**, not "GitHub Actions".
+  `build.yml` commits the regenerated index using `GITHUB_TOKEN`, and GitHub
+  does not let a `GITHUB_TOKEN` push trigger another workflow - so under the
+  Actions source, merges would silently stop redeploying the site.
+- The `CNAME` file is what binds the hostname to this repository. Deleting it
+  unsets the custom domain, and every AuraOS instance pointing at
+  `nexus.aura.lakner.io` loses the index.
+
+The page needs no build step: it is a static file that fetches `index.json`
+relatively, so it works from a domain root and from a subpath alike.
+
+### Notes on the page
 
 `index.html`, `index.json` and `index.yaml` are plain static files at the repo
 root, so any static host works — GitHub Pages from the repository root, or a
