@@ -780,7 +780,7 @@
 
   var LANES = [
     { h: "Runs from source", p: "Push your app to a git repo with app.manifest.json at the root and tag a release. AuraOS installs dependencies on first launch — nothing to build.", c: "sources.git" },
-    { h: "Needs a build", p: "Build in your own CI and push the result as an OCI artifact. A reusable GitHub Action in the store repo does build → push for you.", c: "aura nexus app publish --kind oci" },
+    { h: "Needs a build", p: "Build in your own CI and push the result as an OCI artifact. A reusable GitHub Action in the store repo does build → push for you.", c: "aura nexus app publish --to ghcr.io/<you>/aura-apps/<id>" },
     { h: "Is a service or image", p: "Wrap any existing container image with a thin adapter and runtime: \"raw\". Upstream stays untouched, so upgrades are still docker pull.", c: "sources.oci" }
   ];
 

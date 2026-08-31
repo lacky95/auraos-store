@@ -22,12 +22,21 @@ From your app directory, with [`oras`](https://oras.land) installed
 
 ```sh
 npm ci && npm run build
-aura nexus app publish --kind oci --to ghcr.io/<you> -y
+aura nexus app publish --to ghcr.io/<you>/aura-apps/<your.app.id> -y
 ```
 
-That pushes a bundle to `ghcr.io/<you>/aura-apps/<your.app.id>` tagged with your
-version, your channel, and `latest`. Make the package **public** so the store
-can read it.
+**Give `--to` the full repository path.** A target containing `/` or `:` is used
+verbatim as the OCI repo, so `--to ghcr.io/<you>` would push to a repository
+literally named after you (`ghcr.io/<you>:1.0.0`), which GHCR rejects — it wants
+`owner/name`. The `aura-apps/` segment is a convention, not magic: the CLI only
+adds it for a bare registry *name* such as `local`, which it resolves through
+your configured registries.
+
+That pushes a bundle tagged with your version, plus your channel and `latest`.
+Make the package **public** so the store can read it.
+
+Publishing with no `--to` at all is not a no-op: it defaults to `local`, the
+registry inside your own AuraOS. Useful for testing, useless for a submission.
 
 There is a reusable GitHub Action in this repo
 (`.github/workflows/publish-app.yml`) that does build → push for you; see the
