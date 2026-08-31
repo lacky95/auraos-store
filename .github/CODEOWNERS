@@ -8,10 +8,7 @@
 #
 # Keep this file sorted by path.
 #
-# TODO: replace @<OWNER> with the maintainer handle/team once the GitHub
-# repository exists — GitHub silently ignores CODEOWNERS lines naming an
-# account that cannot be resolved, so a placeholder here is inert, not broken.
 
-*                     @<OWNER>
+*                     @lacky95
 
-/apps/                @<OWNER>
+/apps/                @lacky95

@@ -24,7 +24,7 @@ aura nexus registry add official \
 ```
 
 The raw GitHub URL
-(`https://raw.githubusercontent.com/<OWNER>/auraos-store/main/index.yaml`) works
+(`https://raw.githubusercontent.com/lacky95/auraos-store/main/index.yaml`) works
 identically if you would rather not depend on the hosted domain. Either way the
 `.yaml` suffix puts `CatalogAggregator` on its direct-`fetch` path, so AuraOS
 never clones this repo.

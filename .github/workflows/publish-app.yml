@@ -10,7 +10,7 @@
 #       tags: ['v*']
 #   jobs:
 #     publish:
-#       uses: <OWNER>/auraos-store/.github/workflows/publish-app.yml@main
+#       uses: lacky95/auraos-store/.github/workflows/publish-app.yml@main
 #       permissions:
 #         contents: read
 #         packages: write
