@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The official app catalogue for AuraOS. Browse apps, agents and capabilities — then install them into your own self-hosted OS with one command.">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="AuraOS Store — the official app catalogue">
+<meta property="og:description" content="Browse apps, agents and capabilities for AuraOS, then install them into your own self-hosted OS with one command.">
+<meta name="twitter:card" content="summary_large_image">
+
+<title>AuraOS Store — the official app catalogue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Orbitron:wght@600;700;800&family=Share+Tech+Mono&display=swap">
+<style>
+  /* scificn HUD · AuraOS "CYAN" theme — the same token set as the AuraOS
+     landing page, so the store reads as one product with it. Deliberate single
+     dark world; every colour comes from a token and the body ground is
+     explicit, so the page holds regardless of the host theme. */
+  :root {
+    --bg:#04080a; --surface:#0a1014; --surface-2:#0e1820;
+    --primary:#00aaff; --secondary:#88ddff; --human:#ffd166; --danger:#ff5c5c;
+    --text:#ccecff; --dim:#557788; --faint:#34505e;
+    --border:rgba(0,170,255,.20); --border-2:rgba(0,170,255,.42);
+    --glow:0 0 4px #00aaff, 0 0 10px rgba(0,170,255,.22);
+    --glow-human:0 0 5px #ffd166, 0 0 12px rgba(255,209,102,.22);
+    --clip:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px);
+    --clip-sm:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px);
+    --mono:"Share Tech Mono",ui-monospace,monospace;
+    --aura-font-mono:"Courier New","Courier",monospace;
+    --aura-glow-primary:0 0 4px #00aaff, 0 0 8px rgba(0,170,255,.18);
+    --disp:"Orbitron",ui-sans-serif,sans-serif;
+    --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+    --maxw:980px;
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  body {
+    margin:0;
+    background:
+      radial-gradient(1200px 640px at 82% -12%, rgba(0,170,255,.11), transparent 58%),
+      radial-gradient(720px 460px at 3% 3%, rgba(0,170,255,.05), transparent 55%),
+      var(--bg);
+    color:var(--text); font-family:var(--body); font-size:16px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::after {
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:9;
+    background:repeating-linear-gradient(to bottom, rgba(0,170,255,.022) 0 1px, transparent 1px 3px);
+    mix-blend-mode:screen;
+  }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+  a { color:var(--primary); }
+  h1,h2,h3 { margin:0; }
+  p { margin:0; }
+  .agent { color:var(--primary); text-shadow:var(--glow); }
+  .human { color:var(--human); text-shadow:var(--glow-human); }
+
+  /* ── status bar — mirrors the AuraOS shell's own (StatusBar.astro) ── */
+  .statusbar { position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border);
+    background:var(--surface); backdrop-filter:blur(6px);
+    font-family:var(--aura-font-mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+  .statusbar .in { max-width:var(--maxw); margin:0 auto; height:28px; padding:0 28px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .bar-left { display:flex; align-items:center; gap:10px; min-width:0; }
+  /* The shell wordmark, verbatim: AURA in primary + glow, OS dimmed. */
+  .os-name { color:var(--primary); font-weight:bold; text-shadow:var(--aura-glow-primary);
+    white-space:nowrap; user-select:none; flex-shrink:0; text-decoration:none; }
+  .os-ver { color:var(--dim); }
+  .bar-tag { color:var(--secondary); white-space:nowrap; }
+  .led { color:var(--primary); text-shadow:var(--glow); }
+  .chip { border:1px solid rgba(255,209,102,.4); color:var(--human); padding:2px 8px; font-size:.6rem;
+    letter-spacing:.16em; text-decoration:none; white-space:nowrap;
+    transition:border-color .18s ease, box-shadow .18s ease, color .18s ease; }
+  a.chip:hover { border-color:var(--human); box-shadow:0 0 10px rgba(255,209,102,.28); }
+  a.chip:focus-visible { outline:2px solid var(--human); outline-offset:3px; }
+  .bar-right { display:flex; align-items:center; gap:10px; }
+  /* U+00B7 middle dot, centred on the row rather than sitting on the baseline */
+  .sep { color:var(--primary); text-shadow:var(--glow); user-select:none;
+    display:inline-flex; align-items:center; line-height:1; font-size:1.7em; }
+  .bar-link { color:var(--dim); text-decoration:none; letter-spacing:.08em;
+    transition:color .18s ease, text-shadow .18s ease; }
+  .bar-link:hover { color:var(--primary); text-shadow:var(--aura-glow-primary); }
+  .bar-link:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+  .icon-btn { display:inline-flex; align-items:center; justify-content:center; color:var(--human);
+    transition:color .18s ease, filter .18s ease, transform .18s ease; }
+  .icon-btn svg { display:block; }
+  .icon-btn:hover { filter:drop-shadow(0 0 6px rgba(255,209,102,.65)); transform:translateY(-1px); }
+  .icon-btn:focus-visible { outline:2px solid var(--human); outline-offset:3px; }
+
+  .tag { font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--primary); text-shadow:var(--glow); }
+  section { padding:52px 0; border-top:1px solid var(--border); }
+  .sec-head { display:flex; align-items:baseline; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+  .sec-head h2 { font-family:var(--disp); font-weight:700; font-size:clamp(1.05rem,2.8vw,1.4rem); letter-spacing:.04em; text-transform:uppercase; }
+
+  .panel { position:relative; background:var(--surface); border:1px solid var(--border); clip-path:var(--clip); }
+  .brackets::before,.brackets::after { content:""; position:absolute; width:13px; height:13px; pointer-events:none; }
+  .brackets::before { top:6px; right:6px; border-top:1px solid var(--border-2); border-right:1px solid var(--border-2); }
+  .brackets::after { bottom:6px; left:6px; border-bottom:1px solid var(--border-2); border-left:1px solid var(--border-2); }
+
+  /* ── hero ── */
+  .hero { padding:64px 0 44px; }
+  .kicker { display:flex; align-items:center; gap:12px; margin-bottom:28px; font-family:var(--mono); font-size:.72rem; letter-spacing:.26em; text-transform:uppercase; color:var(--dim); }
+  .diode { width:10px; height:10px; background:var(--primary); box-shadow:var(--glow); flex:none; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+  .wordmark { font-family:var(--disp); font-weight:800; font-size:clamp(2.5rem,10vw,5.2rem); line-height:1; letter-spacing:.06em; color:var(--text); text-shadow:0 0 30px rgba(0,170,255,.3); }
+  .wordmark b { color:var(--primary); text-shadow:var(--glow); }
+  /* "STORE" sits under the wordmark as its subtitle, at display size but
+     tracked wide so it reads as a label on the mark, not a second word in it. */
+  .wordmark-sub { font-family:var(--disp); font-weight:600; font-size:clamp(1rem,3.4vw,1.85rem);
+    letter-spacing:.42em; text-indent:.42em; color:var(--primary); text-shadow:var(--glow); margin-top:12px; }
+  .lede { margin-top:26px; max-width:60ch; color:var(--dim); font-size:1.03rem; }
+  .lede b { color:var(--text); }
+  .stamp { margin-top:14px; font-family:var(--mono); font-size:.8rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
+  .stamp em { font-style:normal; color:var(--dim); }
+
+  /* ── CTAs ── */
+  .cta { margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; }
+  .btn { font-family:var(--mono); font-size:.9rem; letter-spacing:.1em; text-transform:uppercase; text-decoration:none;
+    padding:16px 30px; clip-path:var(--clip); border:1px solid var(--border-2); color:var(--secondary);
+    background:var(--surface); display:inline-flex; align-items:center; gap:9px; cursor:pointer;
+    transition:box-shadow .18s ease, background .18s ease, color .18s ease, transform .18s ease; }
+  .btn:hover { color:var(--text); background:var(--surface-2); box-shadow:0 0 22px rgba(0,170,255,.18); transform:translateY(-1px); }
+  .btn:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+  .btn.primary { background:rgba(0,170,255,.14); border-color:var(--primary); color:var(--primary); text-shadow:var(--glow);
+    box-shadow:inset 0 0 0 1px rgba(0,170,255,.25), 0 0 24px rgba(0,170,255,.18); }
+  .btn.primary:hover { background:rgba(0,170,255,.22); color:var(--text); }
+  /* amber, matching the PRE-ALPHA chip and the bar icon */
+  .btn.ghost { color:var(--human); border-color:rgba(255,209,102,.4); }
+  .btn.ghost:hover { color:var(--human); border-color:var(--human);
+    background:var(--surface-2); box-shadow:0 0 22px rgba(255,209,102,.22); }
+  .btn.ghost:focus-visible { outline-color:var(--human); }
+  .btn small { font-size:.62rem; letter-spacing:.14em; opacity:.7; }
+
+  /* ── terminal panel ── */
+  .term { font-family:var(--mono); }
+  .term-bar { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 16px;
+    border-bottom:1px solid var(--border); font-size:.64rem; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); }
+  .term-body { padding:22px 24px; overflow-x:auto; }
+  .term-body pre { margin:0; font-family:var(--mono); font-size:.95rem; line-height:2; color:var(--text); }
+  .term-body .ps1 { color:var(--primary); text-shadow:var(--glow); user-select:none; }
+  .term-body .cm { color:var(--faint); }
+  .copy { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
+    background:none; border:1px solid var(--border); color:var(--dim); padding:4px 10px; }
+  .copy:hover { color:var(--primary); border-color:var(--border-2); text-shadow:var(--glow); }
+  .copy:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .term-note { margin-top:14px; font-size:.86rem; color:var(--dim); }
+  .term-note code { font-family:var(--mono); color:var(--text); font-size:.9em; }
+  .term-note a { text-decoration:none; border-bottom:1px solid var(--border-2); }
+
+  /* ── catalogue toolbar ── */
+  .toolbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:22px; }
+  .search { flex:1 1 260px; min-width:0; position:relative; display:flex; align-items:center; }
+  .search::before { content:"⌕"; position:absolute; left:13px; color:var(--primary); text-shadow:var(--glow); font-size:1.05rem; pointer-events:none; }
+  .search input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
+    font-family:var(--mono); font-size:.92rem; letter-spacing:.04em; padding:11px 14px 11px 34px; clip-path:var(--clip-sm);
+    transition:border-color .18s ease, box-shadow .18s ease; }
+  .search input::placeholder { color:var(--faint); }
+  .search input:focus { outline:none; border-color:var(--border-2); box-shadow:0 0 18px rgba(0,170,255,.14); }
+  .count { font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); white-space:nowrap; }
+
+  .tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
+  .tab { font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer;
+    background:var(--surface); border:1px solid var(--border); color:var(--dim); padding:6px 13px; clip-path:var(--clip-sm);
+    transition:color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+  .tab:hover { color:var(--secondary); border-color:var(--border-2); }
+  .tab:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .tab[aria-pressed="true"] { color:var(--primary); border-color:var(--primary); text-shadow:var(--glow);
+    background:rgba(0,170,255,.1); box-shadow:inset 0 0 0 1px rgba(0,170,255,.2); }
+
+  /* ── app cards ── */
+  .cards { display:flex; flex-direction:column; gap:14px; }
+  .card { padding:22px 24px; }
+  .card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
+  .card-title { font-family:var(--disp); font-weight:600; font-size:1rem; letter-spacing:.02em; color:var(--text);
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .card-icon { width:26px; height:26px; object-fit:contain; flex:none;
+    border:1px solid var(--border); background:var(--surface-2); clip-path:var(--clip-sm); }
+  .card-id { font-family:var(--mono); font-size:.78rem; letter-spacing:.04em; color:var(--dim); font-weight:400; text-transform:none; }
+  .card-desc { margin-top:10px; color:var(--dim); font-size:.92rem; line-height:1.55; max-width:66ch; }
+  .card-meta { margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:7px;
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; color:var(--faint); }
+  .badge { color:var(--secondary); border:1px solid var(--border); padding:3px 8px; clip-path:var(--clip-sm); }
+  .badge.src { color:var(--primary); border-color:var(--border-2); }
+  .card-actions { display:flex; gap:9px; flex-wrap:wrap; align-items:center; flex:none; }
+  .act { font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; text-decoration:none;
+    cursor:pointer; background:var(--surface); border:1px solid var(--border); color:var(--dim);
+    padding:8px 13px; clip-path:var(--clip-sm); white-space:nowrap;
+    transition:color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease; }
+  .act:hover { color:var(--secondary); border-color:var(--border-2); background:var(--surface-2); }
+  .act:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .act.main { color:var(--primary); border-color:var(--primary); text-shadow:var(--glow); background:rgba(0,170,255,.12); }
+  .act.main:hover { background:rgba(0,170,255,.2); color:var(--text); }
+  .card-cmd { margin-top:16px; padding-top:14px; border-top:1px solid var(--border);
+    font-family:var(--mono); font-size:.8rem; color:var(--dim); word-break:break-all; }
+  .card-cmd code { color:var(--secondary); }
+
+  /* ── catalogue states — loading / empty / error all render as real panels,
+        so a store with nothing in it still looks deliberate. ── */
+  .state { padding:34px 28px; text-align:center; }
+  .state .st-mark { font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--primary); text-shadow:var(--glow); }
+  .state.err .st-mark { color:var(--danger); text-shadow:0 0 8px rgba(255,92,92,.4); }
+  .state h3 { margin-top:14px; font-family:var(--disp); font-weight:600; font-size:1rem; letter-spacing:.03em; text-transform:uppercase; color:var(--text); }
+  .state p { margin-top:12px; color:var(--dim); font-size:.92rem; max-width:56ch; margin-left:auto; margin-right:auto; }
+  .state p + p { margin-top:9px; }
+  .state code { font-family:var(--mono); color:var(--secondary); font-size:.88em; }
+  .state .cta { justify-content:center; margin-top:24px; }
+  .state .btn { padding:13px 24px; font-size:.8rem; }
+
+  /* ── publishing lanes ── */
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .pr { padding:24px 24px; }
+  .pr h3 { font-family:var(--disp); font-weight:600; font-size:.94rem; letter-spacing:.02em; text-transform:uppercase; color:var(--secondary); margin-bottom:10px; }
+  .pr p { color:var(--dim); font-size:.9rem; line-height:1.55; }
+  .pr code { font-family:var(--mono); color:var(--text); font-size:.85em; }
+  .pr b { color:var(--text); font-weight:600; }
+  .pr .cmd { margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+    font-family:var(--mono); font-size:.76rem; color:var(--dim); word-break:break-word; }
+  .pr .cmd code { color:var(--secondary); font-size:1em; }
+  .note { margin-top:18px; font-family:var(--mono); font-size:.92rem; line-height:1.6; letter-spacing:.04em; color:var(--human); opacity:.92; }
+  .note::before { content:"⚠ "; }
+  .note a { color:var(--human); }
+
+  footer { padding:44px 0 64px; border-top:1px solid var(--border); display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center; }
+  .foot { display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+  .foot-links { display:flex; gap:12px; align-items:center; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; }
+  .foot-links a { color:var(--dim); text-decoration:none; }
+  .foot-links a:hover { color:var(--primary); text-shadow:var(--glow); }
+
+  @media (max-width:720px) {
+    .grid3 { grid-template-columns:1fr; }
+    section { padding:42px 0; }
+    .cta .btn { flex:1 1 100%; justify-content:center; }
+    .statusbar .in .hide { display:none; }
+    .card-head { flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <div class="in">
+    <div class="bar-left">
+      <!-- The landing page. Sibling host of nexus.aura.lakner.io — change here
+           if the marketing site moves. -->
+      <a class="os-name" href="https://aura.lakner.io">AURA<span class="os-ver">OS</span></a>
+      <span class="sep" aria-hidden="true">·</span>
+      <span class="bar-tag">Store</span>
+    </div>
+    <nav class="bar-right">
+      <a class="bar-link hide" href="https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Submit</a>
+      <span class="sep hide" aria-hidden="true">·</span>
+      <a class="bar-link hide" href="https://github.com/lacky95/auraos-store/blob/main/POLICY.md" target="_blank" rel="noopener">Policy</a>
+      <span class="sep hide" aria-hidden="true">·</span>
+      <a class="chip" href="https://github.com/lacky95/auraos-store" target="_blank" rel="noopener" title="The store repository on GitHub">Pre-alpha</a>
+      <a class="icon-btn" href="https://github.com/lacky95/auraos-store" target="_blank" rel="noopener" title="The store repository on GitHub" aria-label="The store repository on GitHub">
+        <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      </a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="kicker"><span class="diode"></span> Official catalogue · Curated · Open source</div>
+    <h1 class="wordmark">AURA<b>OS</b></h1>
+    <div class="wordmark-sub">STORE</div>
+    <p class="lede">Apps, agents and capabilities for <b>AuraOS</b> — each one sandboxed in its own
+      container, installed with one command, and reviewed before it lands here.
+      We host the <b>catalogue</b>, not the code: every app stays in its author&rsquo;s
+      own repository or registry.</p>
+    <p class="stamp"><em>One container. Every tool. Fully yours.</em></p>
+
+    <nav class="cta">
+      <a class="btn primary" href="#catalogue">▸ Browse the catalogue</a>
+      <a class="btn" href="#add">Add to your AuraOS</a>
+      <a class="btn ghost" href="https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Submit an app <small>↗</small></a>
+    </nav>
+  </header>
+
+  <!-- CATALOGUE -->
+  <section id="catalogue">
+    <div class="sec-head">
+      <span class="tag">// Catalogue</span>
+      <h2>What you can install</h2>
+    </div>
+
+    <div class="toolbar">
+      <label class="search">
+        <span class="sr-only" hidden>Search apps</span>
+        <input type="search" id="q" placeholder="Search by name, id, publisher or tag…" autocomplete="off" spellcheck="false" aria-label="Search apps" disabled>
+      </label>
+      <span class="count" id="count">Loading…</span>
+    </div>
+
+    <div class="tabs" id="tabs" role="group" aria-label="Filter by category"></div>
+
+    <div class="cards" id="cards">
+      <div class="panel brackets state">
+        <div class="st-mark"><span class="led">●</span> Reading index.json</div>
+        <h3>Loading the catalogue</h3>
+        <p>One moment — this page renders straight from the same
+          <code>index</code> document your AuraOS instance consumes.</p>
+      </div>
+    </div>
+
+    <noscript>
+      <div class="panel brackets state" style="margin-top:14px">
+        <div class="st-mark">No JavaScript</div>
+        <h3>Read the index directly</h3>
+        <p>The catalogue is a plain text file. Open
+          <a href="./index.yaml">index.yaml</a> or <a href="./index.json">index.json</a>.</p>
+      </div>
+    </noscript>
+  </section>
+
+  <!-- ADD THE STORE -->
+  <section id="add">
+    <div class="sec-head">
+      <span class="tag">// Connect</span>
+      <h2>Add this store to your AuraOS</h2>
+    </div>
+    <div class="panel brackets term">
+      <div class="term-bar"><span>bash</span><button class="copy" type="button" data-copy="add">Copy</button></div>
+      <div class="term-body"><pre><span class="ps1">$</span> aura nexus registry add official \
+    https://nexus.aura.lakner.io/index.yaml \
+    <span class="cm">--kind git-index --priority 10</span>
+<span class="ps1">$</span> aura nexus search              <span class="cm"># then browse it in the Nexus app</span></pre></div>
+    </div>
+    <p class="term-note">Priority <code>10</code> sits behind the built-in <code>local</code> registry, so an app you are
+      developing locally still shadows the published one. Don&rsquo;t have AuraOS yet?
+      <a href="https://aura.lakner.io">Start here</a>.</p>
+  </section>
+
+  <!-- PUBLISH -->
+  <section id="publish">
+    <div class="sec-head">
+      <span class="tag">// Publish</span>
+      <h2>Get your app listed</h2>
+    </div>
+    <div class="grid3">
+      <div class="panel brackets pr">
+        <h3>Runs from source</h3>
+        <p>Push your app to a git repo with <code>app.manifest.json</code> at the root and tag a release.
+          AuraOS installs dependencies on first launch — nothing to build.</p>
+        <p class="cmd"><code>sources.git</code></p>
+      </div>
+      <div class="panel brackets pr">
+        <h3>Needs a build</h3>
+        <p>Build in <b>your own CI</b> and push the result as an OCI artifact. A reusable GitHub
+          Action in the store repo does build → push for you.</p>
+        <p class="cmd"><code>aura nexus app publish --kind oci</code></p>
+      </div>
+      <div class="panel brackets pr">
+        <h3>Is a service or image</h3>
+        <p>Wrap any existing container image with a thin adapter and <code>runtime: "raw"</code>.
+          Upstream stays untouched, so upgrades are still <code>docker pull</code>.</p>
+        <p class="cmd"><code>sources.oci</code></p>
+      </div>
+    </div>
+    <p class="term-note" style="margin-top:18px">Then add one YAML file to <code>apps/</code> and open a pull request. CI
+      validates the schema, checks that your <code>id</code> matches your manifest, and confirms every
+      declared channel resolves to a tag that exists.
+      Full guide in <a href="https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING.md</a>.</p>
+    <p class="note">Third-party submissions are not open yet — the AuraOS store UI still installs
+      without showing you the permission diff, and we won&rsquo;t list other people&rsquo;s code until it does.
+      The reasoning is in <a href="https://github.com/lacky95/auraos-store/blob/main/POLICY.md" target="_blank" rel="noopener">POLICY.md</a>.</p>
+  </section>
+
+  <footer>
+    <div class="foot"><span class="led">●</span> AuraOS Store · Curated, not hosted</div>
+    <div class="foot-links">
+      <a href="https://aura.lakner.io">AuraOS</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/lacky95/auraos-store/blob/main/POLICY.md" target="_blank" rel="noopener">Policy</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="./index.yaml">index.yaml</a>
+      <span class="sep" aria-hidden="true">·</span>
+      <a href="https://github.com/lacky95/auraos-store" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* The catalogue renders from index.json — the JSON twin of index.yaml, emitted
+   by scripts/build-index.mjs. Fetching the JSON keeps this page a static file
+   with no build step and no client-side YAML parser, while AuraOS itself keeps
+   reading index.yaml.
+
+   Entry text is author-supplied, so every value goes in via textContent and
+   every URL is checked to be https: before it becomes an href or a src. */
+(function () {
+  "use strict";
+
+  var cardsEl = document.getElementById("cards");
+  var tabsEl  = document.getElementById("tabs");
+  var countEl = document.getElementById("count");
+  var qEl     = document.getElementById("q");
+
+  var apps = [], featured = [], categories = [], activeCat = "", query = "";
+
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  /* Only https URLs become hrefs/srcs. The schema already enforces this at
+     review time; enforcing it again here means a bad entry can never turn into
+     a javascript: or data: link on our own origin. */
+  function safeUrl(u) {
+    if (typeof u !== "string") return null;
+    try { return new URL(u).protocol === "https:" ? u : null; } catch (e) { return null; }
+  }
+
+  /* The source a user would actually install from, rendered the way the entry
+     declares it: OCI ref, git ref, or nothing if the entry is malformed. */
+  function sourceLabel(e) {
+    var s = e.sources || {};
+    if (s.oci && s.oci.ref) return ["oci", s.oci.ref];
+    if (s.git && s.git.ref) return ["git", s.git.ref];
+    return null;
+  }
+
+  function channelLabel(e) {
+    var ch = e.channels || {}, names = Object.keys(ch);
+    if (!names.length) return null;
+    var pick = ch.stable ? "stable" : names[0];
+    var c = ch[pick] || {};
+    var tag = c["git-tag"] || c["oci-tag"] || c.branch || null;
+    return tag ? pick + " · " + tag : pick;
+  }
+
+  function card(e) {
+    var root = el("div", "panel brackets card");
+    var head = el("div", "card-head");
+    var left = el("div");
+
+    var title = el("div", "card-title");
+    var icon = safeUrl(e.icon);
+    if (icon) {
+      var img = el("img", "card-icon");
+      img.src = icon; img.alt = ""; img.loading = "lazy"; img.width = 26; img.height = 26;
+      /* A dead icon URL would otherwise leave a broken-image glyph in the row. */
+      img.addEventListener("error", function () { img.remove(); });
+      title.appendChild(img);
+    }
+    title.appendChild(el("span", null, e.name || e.id));
+    if (featured.indexOf(e.id) !== -1) title.appendChild(el("span", "badge src", "featured"));
+    title.appendChild(el("span", "card-id", "· " + e.id));
+    left.appendChild(title);
+
+    if (e.description) left.appendChild(el("div", "card-desc", e.description));
+
+    var meta = el("div", "card-meta");
+    if (e.publisher) meta.appendChild(el("span", null, e.publisher));
+    var src = sourceLabel(e);
+    if (src) meta.appendChild(el("span", "badge src", src[0] + " · " + src[1]));
+    var chan = channelLabel(e);
+    if (chan) meta.appendChild(el("span", "badge", chan));
+    (e.categories || []).forEach(function (c) { meta.appendChild(el("span", "badge", c)); });
+    (e.tags || []).slice(0, 4).forEach(function (t) { meta.appendChild(el("span", null, "#" + t)); });
+    if (meta.childNodes.length) left.appendChild(meta);
+
+    head.appendChild(left);
+
+    var actions = el("div", "card-actions");
+    var home = safeUrl(e.homepage);
+    if (home) {
+      var a = el("a", "act", "Homepage ↗");
+      a.href = home; a.target = "_blank"; a.rel = "noopener noreferrer";
+      actions.appendChild(a);
+    }
+    /* A web page cannot install into your OS, so the primary action is the
+       command that can — copied straight to the clipboard. */
+    var cmd = "aura nexus app install " + e.id;
+    var btn = el("button", "act main", "Copy install");
+    btn.type = "button";
+    btn.addEventListener("click", function () { copy(cmd, btn, "Copy install"); });
+    actions.appendChild(btn);
+    head.appendChild(actions);
+
+    root.appendChild(head);
+    var cmdRow = el("div", "card-cmd");
+    cmdRow.appendChild(document.createTextNode("$ "));
+    cmdRow.appendChild(el("code", null, cmd));
+    root.appendChild(cmdRow);
+    return root;
+  }
+
+  function state(cls, mark, heading, paras, links) {
+    var root = el("div", "panel brackets state" + (cls ? " " + cls : ""));
+    root.appendChild(el("div", "st-mark", mark));
+    root.appendChild(el("h3", null, heading));
+    paras.forEach(function (p) { root.appendChild(el("p", null, p)); });
+    if (links && links.length) {
+      var nav = el("nav", "cta");
+      links.forEach(function (l) {
+        var a = el("a", "btn" + (l.primary ? " primary" : ""), l.label);
+        a.href = l.href;
+        if (l.href.indexOf("#") !== 0) { a.target = "_blank"; a.rel = "noopener"; }
+        nav.appendChild(a);
+      });
+      root.appendChild(nav);
+    }
+    return root;
+  }
+
+  function matches(e) {
+    if (activeCat && (e.categories || []).indexOf(activeCat) === -1) return false;
+    if (!query) return true;
+    var hay = [e.id, e.name, e.description, e.publisher]
+      .concat(e.tags || []).concat(e.categories || [])
+      .filter(Boolean).join(" ").toLowerCase();
+    return hay.indexOf(query) !== -1;
+  }
+
+  function render() {
+    var visible = apps.filter(matches);
+    /* Featured first, then alphabetical — the index is already sorted by id. */
+    visible.sort(function (a, b) {
+      var fa = featured.indexOf(a.id) !== -1, fb = featured.indexOf(b.id) !== -1;
+      if (fa !== fb) return fa ? -1 : 1;
+      return String(a.id).localeCompare(String(b.id));
+    });
+
+    cardsEl.textContent = "";
+    countEl.textContent = visible.length + (visible.length === 1 ? " app" : " apps") +
+      (visible.length !== apps.length ? " of " + apps.length : "");
+
+    if (!apps.length) {
+      cardsEl.appendChild(state("", "Catalogue empty", "Nothing published yet", [
+        "The store is live but the index carries no apps — third-party submissions are not open while the AuraOS install flow still skips the permission diff.",
+        "The tooling, schema and review process are in place. When the gate lifts, entries land here the day their pull request merges."
+      ], [
+        { label: "Read the policy", href: "https://github.com/lacky95/auraos-store/blob/main/POLICY.md" },
+        { label: "Submit an app", href: "https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md", primary: true }
+      ]));
+      return;
+    }
+    if (!visible.length) {
+      cardsEl.appendChild(state("", "No matches", "Nothing here", [
+        "No app matches that filter. Try a different category, or clear the search."
+      ]));
+      return;
+    }
+    visible.forEach(function (e) { cardsEl.appendChild(card(e)); });
+  }
+
+  function buildTabs() {
+    tabsEl.textContent = "";
+    if (!apps.length) return;
+    /* Only offer categories that some listed app actually uses — a tab that
+       always yields "nothing here" is worse than no tab. */
+    var used = {};
+    apps.forEach(function (e) { (e.categories || []).forEach(function (c) { used[c] = true; }); });
+    var list = [{ slug: "", label: "All" }].concat(
+      categories.filter(function (c) { return used[c.slug]; }));
+
+    list.forEach(function (c) {
+      var b = el("button", "tab", (c.label || c.slug).toUpperCase());
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(c.slug === activeCat));
+      b.addEventListener("click", function () {
+        activeCat = c.slug;
+        Array.prototype.forEach.call(tabsEl.children, function (n) { n.setAttribute("aria-pressed", "false"); });
+        b.setAttribute("aria-pressed", "true");
+        render();
+      });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function copy(text, btn, restore) {
+    var done = function (ok) {
+      btn.textContent = ok ? "Copied" : "Ctrl+C";
+      setTimeout(function () { btn.textContent = restore; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } else { done(false); }
+  }
+
+  /* Copy buttons on the static terminal panels. */
+  var SNIPPETS = {
+    add: "aura nexus registry add official \\\n    https://nexus.aura.lakner.io/index.yaml \\\n    --kind git-index --priority 10"
+  };
+  Array.prototype.forEach.call(document.querySelectorAll(".copy[data-copy]"), function (b) {
+    b.addEventListener("click", function () { copy(SNIPPETS[b.dataset.copy] || "", b, "Copy"); });
+  });
+
+  qEl.addEventListener("input", function () { query = qEl.value.trim().toLowerCase(); render(); });
+
+  fetch("./index.json", { cache: "no-cache" })
+    .then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(function (doc) {
+      apps = Array.isArray(doc.apps) ? doc.apps.filter(function (a) { return a && a.id; }) : [];
+      featured = Array.isArray(doc.featured) ? doc.featured : [];
+      categories = Array.isArray(doc.categories) ? doc.categories : [];
+      qEl.disabled = apps.length === 0;
+      buildTabs();
+      render();
+    })
+    .catch(function (err) {
+      /* Never leave the loading panel up: a stuck spinner reads as a broken
+         page, while a stated failure tells the user where the data actually is. */
+      countEl.textContent = "unavailable";
+      cardsEl.textContent = "";
+      cardsEl.appendChild(state("err", "✕ Index unreachable", "Could not load the catalogue", [
+        "index.json did not load (" + err.message + ").",
+        "The catalogue is a plain text file — you can always read it directly in the repository."
+      ], [
+        { label: "index.yaml", href: "./index.yaml" },
+        { label: "Store on GitHub", href: "https://github.com/lacky95/auraos-store" }
+      ]));
+    });
+})();
+</script>
+</body>
+</html>

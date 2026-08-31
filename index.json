@@ -1,0 +1,33 @@
+{
+  "_generated": "Built from apps/*.yaml by scripts/build-index.mjs - do not edit.",
+  "schema": 1,
+  "apps": [],
+  "featured": [],
+  "categories": [
+    {
+      "slug": "system",
+      "label": "System",
+      "description": "Core OS services and infrastructure."
+    },
+    {
+      "slug": "developer",
+      "label": "Developer",
+      "description": "Tools for building and debugging."
+    },
+    {
+      "slug": "productivity",
+      "label": "Productivity",
+      "description": "Get things done."
+    },
+    {
+      "slug": "utility",
+      "label": "Utilities",
+      "description": "Small, single-purpose helpers."
+    },
+    {
+      "slug": "media",
+      "label": "Media",
+      "description": "Audio, video, and images."
+    }
+  ]
+}

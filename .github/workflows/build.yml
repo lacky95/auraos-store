@@ -1,6 +1,6 @@
-# On merge to main, regenerate index.yaml and commit it if it changed.
-# index.yaml is the artifact every AuraOS instance fetches, so it must always
-# reflect apps/ exactly.
+# On merge to main, regenerate index.yaml + index.json and commit them if they changed.
+# index.yaml is the artifact every AuraOS instance fetches and index.json is what
+# the store page renders, so both must always reflect apps/ exactly.
 name: build-index
 
 on:
@@ -29,17 +29,17 @@ jobs:
 
       - run: npm ci
 
-      - name: Rebuild index.yaml
+      - name: Rebuild the index
         run: node scripts/build-index.mjs
 
       - name: Commit if changed
         run: |
-          if git diff --quiet -- index.yaml; then
-            echo "index.yaml already up to date"
+          if git diff --quiet -- index.yaml index.json; then
+            echo "index already up to date"
             exit 0
           fi
           git config user.name  "auraos-store[bot]"
           git config user.email "auraos-store@users.noreply.github.com"
-          git add index.yaml
+          git add index.yaml index.json
           git commit -m "chore(index): rebuild from apps/"
           git push
