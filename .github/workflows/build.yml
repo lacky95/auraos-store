@@ -6,7 +6,10 @@ name: build-index
 on:
   push:
     branches: [main]
-    paths: ['apps/**', 'featured.yaml', 'scripts/**']
+    # index.yaml / index.json are listed so a hand-edit that reaches main is
+    # repaired on the next push rather than sitting there until someone
+    # happens to change a source file.
+    paths: ['apps/**', 'featured.yaml', 'scripts/**', 'index.yaml', 'index.json']
   workflow_dispatch:
 
 permissions:

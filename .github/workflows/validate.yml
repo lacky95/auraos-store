@@ -4,7 +4,11 @@ name: validate
 
 on:
   pull_request:
-    paths: ['apps/**', 'featured.yaml', 'schema/**', 'scripts/**', '.github/workflows/validate.yml']
+    # index.yaml / index.json are generated, but nothing stops a PR from
+    # editing them by hand - and without them here, such a PR would run no
+    # checks at all and merge green.
+    paths: ['apps/**', 'featured.yaml', 'schema/**', 'scripts/**',
+            'index.yaml', 'index.json', '.github/workflows/validate.yml']
   workflow_dispatch:
 
 permissions:
