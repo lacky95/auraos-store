@@ -1,0 +1,17 @@
+# Ownership of store entries.
+#
+# The maintainers own the tooling, schema, policy and the generated index.
+# Each app author owns their own entry file, so they are requested as a
+# reviewer on changes to it. Add a line when you accept a new app:
+#
+#   /apps/com.example.hello.yaml   @example-user
+#
+# Keep this file sorted by path.
+#
+# TODO: replace @<OWNER> with the maintainer handle/team once the GitHub
+# repository exists — GitHub silently ignores CODEOWNERS lines naming an
+# account that cannot be resolved, so a placeholder here is inert, not broken.
+
+*                     @<OWNER>
+
+/apps/                @<OWNER>

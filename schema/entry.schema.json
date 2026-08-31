@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://auraos.dev/schema/store-entry.schema.json",
+  "title": "AuraOS store entry",
+  "description": "One app in the official AuraOS store. Mirrors IndexEntry in packages/core/src/nexus/types.ts — that interface is the consuming contract, so this schema must stay in step with it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "name", "sources"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Reverse-domain app id. MUST equal the filename (apps/<id>.yaml) and the id in the app's own app.manifest.json.",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+$",
+      "maxLength": 128
+    },
+    "name":        { "type": "string", "minLength": 1, "maxLength": 64 },
+    "description": { "type": "string", "maxLength": 200 },
+    "icon":        { "$ref": "#/$defs/httpsUrl" },
+    "publisher":   { "type": "string", "maxLength": 80 },
+    "homepage":    { "$ref": "#/$defs/httpsUrl" },
+    "categories": {
+      "type": "array",
+      "items": { "enum": ["system", "developer", "productivity", "utility", "media"] },
+      "uniqueItems": true,
+      "maxItems": 3
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$", "maxLength": 24 },
+      "uniqueItems": true,
+      "maxItems": 10
+    },
+    "screenshots": {
+      "type": "array",
+      "description": "Absolute https URLs. AuraOS hosts no images.",
+      "items": { "$ref": "#/$defs/httpsUrl" },
+      "maxItems": 8
+    },
+    "sources": {
+      "type": "object",
+      "description": "Where the app actually lives. At least one of git / oci.",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "git": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ref"],
+          "properties": {
+            "ref": {
+              "type": "string",
+              "description": "Schemeless repo, e.g. 'github.com/user/repo'. The app manifest must sit at the repo root.",
+              "pattern": "^[a-z0-9.-]+\\.[a-z]{2,}/[A-Za-z0-9._~-]+/[A-Za-z0-9._~-]+$"
+            },
+            "default-branch": { "type": "string", "maxLength": 64 }
+          }
+        },
+        "oci": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ref"],
+          "properties": {
+            "ref": {
+              "type": "string",
+              "description": "Registry repo WITHOUT a tag, e.g. 'ghcr.io/user/aura-foo'. Tags come from channels.",
+              "pattern": "^[a-z0-9.-]+(:[0-9]+)?/[a-z0-9._/-]+$",
+              "not": { "pattern": ":[^0-9/][^/]*$" }
+            }
+          }
+        }
+      }
+    },
+    "channels": {
+      "type": "object",
+      "description": "Channel name -> the tag it resolves to. 'stable' is the default channel the resolver uses.",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]*$" },
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "git-tag": { "type": "string", "maxLength": 64 },
+          "oci-tag": { "type": "string", "maxLength": 64 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "httpsUrl": { "type": "string", "format": "uri", "pattern": "^https://" }
+  }
+}

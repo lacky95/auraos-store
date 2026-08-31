@@ -1,0 +1,38 @@
+# Runs on every PR. Full validation, including network reachability, so a
+# submission cannot be merged pointing at a source that does not exist.
+name: validate
+
+on:
+  pull_request:
+    paths: ['apps/**', 'featured.yaml', 'schema/**', 'scripts/**', '.github/workflows/validate.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+
+      # Only needed to verify OCI-sourced entries; harmless otherwise.
+      - name: Install oras
+        run: |
+          VERSION=1.2.0
+          curl -fsSL "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin oras
+          oras version
+
+      - name: Validate entries
+        run: node scripts/validate.mjs
+
+      - name: Check index.yaml is up to date
+        run: node scripts/build-index.mjs --check

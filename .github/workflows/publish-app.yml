@@ -1,0 +1,123 @@
+# Reusable workflow for APP AUTHORS. Call it from your own repository to build
+# your app and push it to a registry as an AuraOS OCI artifact, so your store
+# entry can point at `sources.oci`.
+#
+# In your app repo, .github/workflows/release.yml:
+#
+#   name: release
+#   on:
+#     push:
+#       tags: ['v*']
+#   jobs:
+#     publish:
+#       uses: <OWNER>/auraos-store/.github/workflows/publish-app.yml@main
+#       permissions:
+#         contents: read
+#         packages: write
+#       with:
+#         app-id: com.example.hello
+#         build-command: npm ci && npm run build
+#
+# Publishes to ghcr.io/<your-org>/aura-apps/<app-id>, tagged with the release
+# version plus `stable` and `latest`. Then point your store entry at:
+#
+#   sources:
+#     oci: { ref: ghcr.io/<your-org>/aura-apps/com.example.hello }
+#   channels:
+#     stable: { oci-tag: '1.0.0' }
+name: publish-app
+
+on:
+  workflow_call:
+    inputs:
+      app-id:
+        description: 'Reverse-domain app id; must match app.manifest.json'
+        required: true
+        type: string
+      version:
+        description: 'Version tag. Defaults to the git tag without its leading v.'
+        required: false
+        type: string
+      build-command:
+        description: 'Shell command that produces the runnable app. Empty = ship source as-is.'
+        required: false
+        default: ''
+        type: string
+      channel:
+        description: 'Channel tag pushed alongside the version.'
+        required: false
+        default: 'stable'
+        type: string
+      registry:
+        description: 'Target registry host.'
+        required: false
+        default: 'ghcr.io'
+        type: string
+      working-directory:
+        description: 'Directory holding app.manifest.json.'
+        required: false
+        default: '.'
+        type: string
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify manifest matches app-id
+        run: |
+          test -f app.manifest.json || { echo "::error::no app.manifest.json in ${{ inputs.working-directory }}"; exit 1; }
+          ID=$(node -p "require('./app.manifest.json').id")
+          if [ "$ID" != "${{ inputs.app-id }}" ]; then
+            echo "::error::manifest id '$ID' does not match app-id '${{ inputs.app-id }}'"; exit 1
+          fi
+
+      - name: Build
+        if: inputs.build-command != ''
+        run: ${{ inputs.build-command }}
+
+      - name: Install oras
+        run: |
+          VERSION=1.2.0
+          curl -fsSL "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin oras
+
+      - name: Log in to the registry
+        run: echo "${{ github.token }}" | oras login ${{ inputs.registry }} -u ${{ github.actor }} --password-stdin
+
+      - name: Push the app bundle
+        run: |
+          set -euo pipefail
+          RAW_VERSION="${{ inputs.version }}"
+          if [ -z "$RAW_VERSION" ]; then RAW_VERSION="${GITHUB_REF_NAME#v}"; fi
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO="${{ inputs.registry }}/${OWNER}/aura-apps/${{ inputs.app-id }}"
+
+          # Same shape AuraOS's own publisher produces: a gzipped bundle of the
+          # app directory, carrying the manifest in OCI annotations so the store
+          # can list it without pulling.
+          tar -czf bundle.tar.gz \
+            --exclude='.git' --exclude='node_modules/.cache' --exclude='bundle.tar.gz' .
+
+          oras push "${REPO}:${RAW_VERSION}" \
+            --artifact-type application/vnd.aura.app.manifest.v1+json \
+            --annotation "org.opencontainers.image.title=$(node -p "require('./app.manifest.json').name || ''")" \
+            --annotation "org.opencontainers.image.version=${RAW_VERSION}" \
+            --annotation "org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}" \
+            --annotation "app.aura.id=${{ inputs.app-id }}" \
+            bundle.tar.gz:application/vnd.aura.app.bundle.v1.tar+gzip
+
+          oras tag "${REPO}:${RAW_VERSION}" "${{ inputs.channel }}" latest
+          echo "Published ${REPO}:${RAW_VERSION}"
+          echo "::notice::Point your store entry at sources.oci.ref=${REPO} with channels.${{ inputs.channel }}.oci-tag=${RAW_VERSION}"

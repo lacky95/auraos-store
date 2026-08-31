@@ -1,0 +1,19 @@
+{
+  "name": "auraos-store",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "The official AuraOS app store - a curated index of apps.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "validate:offline": "node scripts/validate.mjs --no-network",
+    "build": "node scripts/build-index.mjs",
+    "check": "node scripts/validate.mjs --no-network && node scripts/build-index.mjs --check"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "yaml": "^2.6.1"
+  }
+}

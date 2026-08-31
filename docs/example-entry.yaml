@@ -1,0 +1,14 @@
+id: com.example.hello
+name: Hello
+description: A minimal AuraOS demo app.
+publisher: Example Ltd
+homepage: https://example.com
+categories: [utility]
+tags: [demo]
+sources:
+  git:
+    ref: github.com/example/hello
+    default-branch: main
+channels:
+  stable:
+    git-tag: v1.0.0
