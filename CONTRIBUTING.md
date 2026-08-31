@@ -75,12 +75,23 @@ A copy you can start from lives in [`docs/example-entry.yaml`](docs/example-entr
 **`stable` is required in practice** — installing by bare id (`aura nexus app
 install com.example.hello`) resolves the `stable` channel.
 
-## 3. Check it locally
+## 3. Rebuild the index and check it locally
+
+`index.yaml` and `index.json` are generated from `apps/`, and they are
+committed — that is what AuraOS instances actually fetch. **Your pull request
+has to include them**, regenerated: CI verifies the committed index matches
+what `apps/` produces, so a PR that adds an entry without rebuilding fails with
+`index.yaml is stale`.
 
 ```sh
 npm install
+node scripts/build-index.mjs     # regenerate index.yaml + index.json
 node scripts/validate.mjs        # exactly what CI runs
 ```
+
+Commit all three files: your `apps/<id>.yaml` and both index files. Having them
+in the PR means a reviewer sees precisely what the published catalogue becomes,
+rather than trusting a post-merge job to produce the right thing.
 
 ## 4. Open the pull request
 
@@ -91,8 +102,8 @@ CI will verify that:
 - the source is reachable and every channel tag really exists;
 - the repo/artifact actually contains a valid `app.manifest.json` whose `id`
   matches your entry;
-- `icon` is the same 1-3 character glyph as your `app.manifest.json`, and
-  screenshots are absolute `https://` URLs.
+- `icon` is a 1-3 character glyph and screenshots are absolute `https://` URLs;
+- the committed `index.yaml` / `index.json` match what `apps/` generates.
 
 A human then reads the PR. Anything requesting privileged capabilities — the
 `docker` tool, `*` (all tools), or a `dataProvider` authority — is flagged for
