@@ -44,7 +44,7 @@ name: Hello
 description: One line, max 200 characters.
 publisher: Example Ltd
 homepage: https://example.com
-icon: https://example.com/icon.png        # absolute https
+icon: HEL                      # 1-3 character glyph, NOT a URL
 categories: [utility]           # system | developer | productivity | utility | media
 tags: [demo]
 screenshots:                    # absolute https - AuraOS hosts no images
@@ -82,7 +82,8 @@ CI will verify that:
 - the source is reachable and every channel tag really exists;
 - the repo/artifact actually contains a valid `app.manifest.json` whose `id`
   matches your entry;
-- icons and screenshots are absolute `https://` URLs.
+- `icon` is the same 1-3 character glyph as your `app.manifest.json`, and
+  screenshots are absolute `https://` URLs.
 
 A human then reads the PR. Anything requesting privileged capabilities — the
 `docker` tool, `*` (all tools), or a `dataProvider` authority — is flagged for

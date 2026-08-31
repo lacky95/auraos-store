@@ -1,5 +1,6 @@
 id: com.example.hello
 name: Hello
+icon: HEL                       # 1-3 char glyph, NOT a URL - AuraOS renders it as text
 description: A minimal AuraOS demo app.
 publisher: Example Ltd
 homepage: https://example.com

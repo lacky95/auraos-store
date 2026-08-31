@@ -15,7 +15,13 @@
     },
     "name":        { "type": "string", "minLength": 1, "maxLength": 64 },
     "description": { "type": "string", "maxLength": 200 },
-    "icon":        { "$ref": "#/$defs/httpsUrl" },
+    "icon":        {
+      "type": "string",
+      "description": "Short text glyph shown on the app badge, e.g. \"NEX\". NOT a URL - AuraOS renders this as text, and the app manifest caps it at 3 characters.",
+      "minLength": 1,
+      "maxLength": 3,
+      "pattern": "^\\S{1,3}$"
+    },
     "publisher":   { "type": "string", "maxLength": 80 },
     "homepage":    { "$ref": "#/$defs/httpsUrl" },
     "categories": {
