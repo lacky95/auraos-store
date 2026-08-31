@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="The official app catalogue for AuraOS. Browse apps, agents and capabilities — then install them into your own self-hosted OS with one command.">
+<meta name="description" content="The official app catalogue for AuraOS. Browse apps, agents and capabilities, then install them into your own self-hosted OS with one command.">
 <meta name="color-scheme" content="dark">
 
 <meta property="og:type" content="website">
@@ -19,7 +19,10 @@
   /* scificn HUD · AuraOS "CYAN" theme — the same token set as the AuraOS
      landing page, so the store reads as one product with it. Deliberate single
      dark world; every colour comes from a token and the body ground is
-     explicit, so the page holds regardless of the host theme. */
+     explicit, so the page holds regardless of the host theme.
+
+     This is a CATALOGUE, not a landing page: the type scale is one step down
+     throughout, the hero is a single line, and the space goes to the grid. */
   :root {
     --bg:#04080a; --surface:#0a1014; --surface-2:#0e1820;
     --primary:#00aaff; --secondary:#88ddff; --human:#ffd166; --danger:#ff5c5c;
@@ -34,17 +37,16 @@
     --aura-glow-primary:0 0 4px #00aaff, 0 0 8px rgba(0,170,255,.18);
     --disp:"Orbitron",ui-sans-serif,sans-serif;
     --body:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
-    --maxw:980px;
+    --maxw:1180px;
   }
   * { box-sizing:border-box; }
-  html { -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+  html { -webkit-text-size-adjust:100%; }
   body {
     margin:0;
     background:
-      radial-gradient(1200px 640px at 82% -12%, rgba(0,170,255,.11), transparent 58%),
-      radial-gradient(720px 460px at 3% 3%, rgba(0,170,255,.05), transparent 55%),
+      radial-gradient(1100px 520px at 84% -14%, rgba(0,170,255,.09), transparent 58%),
       var(--bg);
-    color:var(--text); font-family:var(--body); font-size:16px; line-height:1.62;
+    color:var(--text); font-family:var(--body); font-size:15px; line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
   body::after {
@@ -52,18 +54,17 @@
     background:repeating-linear-gradient(to bottom, rgba(0,170,255,.022) 0 1px, transparent 1px 3px);
     mix-blend-mode:screen;
   }
-  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 28px; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 24px; }
   a { color:var(--primary); }
   h1,h2,h3 { margin:0; }
   p { margin:0; }
-  .agent { color:var(--primary); text-shadow:var(--glow); }
-  .human { color:var(--human); text-shadow:var(--glow-human); }
+  @media (prefers-reduced-motion:reduce) { * { transition:none !important; animation:none !important; } }
 
   /* ── status bar — mirrors the AuraOS shell's own (StatusBar.astro) ── */
-  .statusbar { position:sticky; top:0; z-index:10; border-bottom:1px solid var(--border);
+  .statusbar { position:sticky; top:0; z-index:20; border-bottom:1px solid var(--border);
     background:var(--surface); backdrop-filter:blur(6px);
     font-family:var(--aura-font-mono); font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
-  .statusbar .in { max-width:var(--maxw); margin:0 auto; height:28px; padding:0 28px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .statusbar .in { max-width:var(--maxw); margin:0 auto; height:28px; padding:0 24px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
   .bar-left { display:flex; align-items:center; gap:10px; min-width:0; }
   /* The shell wordmark, verbatim: AURA in primary + glow, OS dimmed. */
   .os-name { color:var(--primary); font-weight:bold; text-shadow:var(--aura-glow-primary);
@@ -73,7 +74,7 @@
   .led { color:var(--primary); text-shadow:var(--glow); }
   .chip { border:1px solid rgba(255,209,102,.4); color:var(--human); padding:2px 8px; font-size:.6rem;
     letter-spacing:.16em; text-decoration:none; white-space:nowrap;
-    transition:border-color .18s ease, box-shadow .18s ease, color .18s ease; }
+    transition:border-color .18s ease, box-shadow .18s ease; }
   a.chip:hover { border-color:var(--human); box-shadow:0 0 10px rgba(255,209,102,.28); }
   a.chip:focus-visible { outline:2px solid var(--human); outline-offset:3px; }
   .bar-right { display:flex; align-items:center; gap:10px; }
@@ -85,165 +86,230 @@
   .bar-link:hover { color:var(--primary); text-shadow:var(--aura-glow-primary); }
   .bar-link:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
   .icon-btn { display:inline-flex; align-items:center; justify-content:center; color:var(--human);
-    transition:color .18s ease, filter .18s ease, transform .18s ease; }
+    transition:filter .18s ease, transform .18s ease; }
   .icon-btn svg { display:block; }
   .icon-btn:hover { filter:drop-shadow(0 0 6px rgba(255,209,102,.65)); transform:translateY(-1px); }
   .icon-btn:focus-visible { outline:2px solid var(--human); outline-offset:3px; }
 
-  .tag { font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--primary); text-shadow:var(--glow); }
-  section { padding:52px 0; border-top:1px solid var(--border); }
-  .sec-head { display:flex; align-items:baseline; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
-  .sec-head h2 { font-family:var(--disp); font-weight:700; font-size:clamp(1.05rem,2.8vw,1.4rem); letter-spacing:.04em; text-transform:uppercase; }
+  /* ── app toolbar: the store's own navigation + search ── */
+  .appbar { position:sticky; top:28px; z-index:15; border-bottom:1px solid var(--border);
+    background:rgba(10,16,20,.92); backdrop-filter:blur(8px); }
+  .appbar .in { max-width:var(--maxw); margin:0 auto; padding:12px 24px;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .brand { display:flex; align-items:baseline; gap:9px; text-decoration:none; flex:none; }
+  .brand .mark { font-family:var(--disp); font-weight:700; font-size:1rem; letter-spacing:.08em;
+    color:var(--text); text-transform:uppercase; }
+  .brand .mark b { color:var(--primary); text-shadow:var(--glow); font-weight:700; }
+  .brand .sub { font-family:var(--mono); font-size:.68rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--primary); text-shadow:var(--glow); }
+  .nav { display:flex; gap:4px; flex:none; }
+  .nav a { font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; text-transform:uppercase;
+    text-decoration:none; color:var(--dim); padding:7px 13px; clip-path:var(--clip-sm);
+    border:1px solid transparent; transition:color .18s ease, border-color .18s ease, background .18s ease; }
+  .nav a:hover { color:var(--secondary); border-color:var(--border); }
+  .nav a:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .nav a[aria-current="page"] { color:var(--primary); text-shadow:var(--glow);
+    border-color:var(--primary); background:rgba(0,170,255,.1); }
+
+  .search { flex:1 1 220px; min-width:0; max-width:400px; margin-left:auto; position:relative; display:flex; align-items:center; }
+  .search::before { content:"⌕"; position:absolute; left:12px; color:var(--primary); text-shadow:var(--glow); font-size:1rem; pointer-events:none; }
+  .search input { width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
+    font-family:var(--mono); font-size:.84rem; letter-spacing:.03em; padding:8px 12px 8px 31px; clip-path:var(--clip-sm);
+    transition:border-color .18s ease, box-shadow .18s ease; }
+  .search input::placeholder { color:var(--faint); }
+  .search input:focus { outline:none; border-color:var(--border-2); box-shadow:0 0 16px rgba(0,170,255,.14); }
+  /* Needed explicitly: the UA's [hidden] rule is display:none, which .search's
+     own display:flex would otherwise win against. */
+  .search[hidden] { display:none; }
+
+  /* ── one-line masthead: the store says what it is and moves on ── */
+  .masthead { border-bottom:1px solid var(--border); }
+  .masthead .in { max-width:var(--maxw); margin:0 auto; padding:20px 24px;
+    display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .masthead p { font-size:.92rem; color:var(--dim); }
+  .masthead b { color:var(--text); font-weight:600; }
+  .masthead .meta { font-family:var(--mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); white-space:nowrap; }
+
+  /* Must be `main.wrap`, not `main`: this element carries .wrap too, and a
+     class selector outranks an element one - a bare `main { padding }` rule is
+     silently overridden by .wrap's own padding and does nothing at all.
+     The bottom value is the gap between the last card and the footer rule;
+     a dense grid needs more of it than a column of prose does. */
+  main.wrap { padding-top:34px; padding-bottom:84px; }
+
+  /* ── catalogue: rail + grid ── */
+  .catalogue { display:grid; grid-template-columns:196px 1fr; gap:30px; align-items:start; padding-top:16px; }
+  .rail { position:sticky; top:88px; display:flex; flex-direction:column; gap:3px; }
+  .rail-h { font-family:var(--mono); font-size:.66rem; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--faint); padding:6px 10px 9px; }
+  .rail-i { display:flex; justify-content:space-between; align-items:center; gap:10px; width:100%;
+    font-family:var(--mono); font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; text-align:left;
+    cursor:pointer; background:none; border:1px solid transparent; color:var(--dim); padding:7px 10px;
+    clip-path:var(--clip-sm); transition:color .18s ease, background .18s ease, border-color .18s ease; }
+  .rail-i:hover { color:var(--secondary); background:var(--surface); }
+  .rail-i:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .rail-i[aria-pressed="true"] { color:var(--primary); text-shadow:var(--glow);
+    background:rgba(0,170,255,.1); border-color:var(--border-2); }
+  .rail-i .n { font-size:.7rem; color:var(--faint); }
+  .rail-i[aria-pressed="true"] .n { color:var(--primary); }
+
+  .content-h { display:flex; align-items:baseline; justify-content:space-between; gap:14px;
+    flex-wrap:wrap; margin-bottom:16px; }
+  .content-h h1 { font-family:var(--disp); font-weight:600; font-size:1.02rem; letter-spacing:.06em; text-transform:uppercase; }
+  .count { font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); white-space:nowrap; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(272px, 1fr)); gap:14px; }
+
+  /* ── app card — compact, scannable, whole tile is the link ── */
+  .card { position:relative; display:flex; flex-direction:column; gap:10px;
+    background:var(--surface); border:1px solid var(--border); clip-path:var(--clip); padding:16px 17px;
+    transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+  .card:hover { border-color:var(--border-2); box-shadow:0 0 24px rgba(0,170,255,.12); transform:translateY(-2px); }
+  .card:focus-within { border-color:var(--primary); box-shadow:0 0 24px rgba(0,170,255,.2); }
+  .card-top { display:flex; align-items:flex-start; gap:11px; }
+  /* The glyph badge, matching how the Nexus app renders the same field. */
+  .glyph { flex:none; display:inline-flex; align-items:center; justify-content:center;
+    min-width:34px; height:30px; padding:0 7px;
+    font-family:var(--mono); font-size:.8rem; letter-spacing:.06em;
+    color:var(--primary); text-shadow:var(--glow);
+    border:1px solid var(--border-2); background:rgba(0,170,255,.1); clip-path:var(--clip-sm); }
+  .card-name { font-family:var(--disp); font-weight:600; font-size:.9rem; letter-spacing:.02em; color:var(--text); }
+  /* Stretched link: the tile is clickable without nesting the copy button
+     inside an <a>, which would be invalid and would swallow its click. */
+  .card-name a { color:inherit; text-decoration:none; }
+  .card-name a::after { content:""; position:absolute; inset:0; }
+  .card-name a:focus-visible { outline:none; }
+  .card-id { margin-top:2px; font-family:var(--mono); font-size:.7rem; letter-spacing:.03em; color:var(--dim); word-break:break-all; }
+  .card-desc { font-size:.82rem; line-height:1.5; color:var(--dim);
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .card-foot { margin-top:auto; padding-top:11px; border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .badge { font-family:var(--mono); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--secondary); border:1px solid var(--border); padding:3px 7px; clip-path:var(--clip-sm); white-space:nowrap; }
+  .badge.src { color:var(--primary); border-color:var(--border-2); }
+  .badge.feat { color:var(--human); border-color:rgba(255,209,102,.4); }
+  /* Sits above the stretched link so its own click is not swallowed. */
+  .copy-mini { position:relative; z-index:1; margin-left:auto; flex:none; cursor:pointer;
+    font-family:var(--mono); font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
+    background:none; border:1px solid var(--border); color:var(--dim); padding:4px 9px; clip-path:var(--clip-sm);
+    transition:color .18s ease, border-color .18s ease, background .18s ease; }
+  .copy-mini:hover { color:var(--primary); border-color:var(--border-2); background:rgba(0,170,255,.1); text-shadow:var(--glow); }
+  .copy-mini:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+
+  /* ── detail page ── */
+  /* A real button, not a text link: leaving a detail page is the most common
+     thing a reader does here, so it gets a target worth aiming at. */
+  .back { display:inline-flex; align-items:center; gap:10px; margin-bottom:24px;
+    font-family:var(--mono); font-size:.82rem; letter-spacing:.13em; text-transform:uppercase;
+    color:var(--secondary); text-decoration:none;
+    padding:11px 20px; background:var(--surface); border:1px solid var(--border); clip-path:var(--clip-sm);
+    transition:color .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease; }
+  .back .arrow { font-size:1rem; line-height:1; color:var(--primary); text-shadow:var(--glow);
+    transition:transform .18s ease; }
+  .back:hover { color:var(--text); border-color:var(--border-2); background:var(--surface-2);
+    box-shadow:0 0 18px rgba(0,170,255,.14); }
+  .back:hover .arrow { transform:translateX(-3px); }
+  .back:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+  .detail { display:flex; flex-direction:column; gap:22px; max-width:860px; }
+  .back { margin-top:6px; }
+  .dt-head { display:flex; align-items:flex-start; gap:16px; }
+  .glyph.lg { min-width:54px; height:48px; font-size:1.15rem; }
+  .dt-head h1 { font-family:var(--disp); font-weight:700; font-size:1.5rem; letter-spacing:.03em; color:var(--text); }
+  .dt-id { margin-top:5px; font-family:var(--mono); font-size:.8rem; color:var(--dim); word-break:break-all; }
+  .dt-badges { margin-top:11px; display:flex; gap:6px; flex-wrap:wrap; }
+  .dt-desc { font-size:.98rem; line-height:1.65; color:var(--text); max-width:64ch; }
 
   .panel { position:relative; background:var(--surface); border:1px solid var(--border); clip-path:var(--clip); }
   .brackets::before,.brackets::after { content:""; position:absolute; width:13px; height:13px; pointer-events:none; }
   .brackets::before { top:6px; right:6px; border-top:1px solid var(--border-2); border-right:1px solid var(--border-2); }
   .brackets::after { bottom:6px; left:6px; border-bottom:1px solid var(--border-2); border-left:1px solid var(--border-2); }
 
-  /* ── hero ── */
-  .hero { padding:64px 0 44px; }
-  .kicker { display:flex; align-items:center; gap:12px; margin-bottom:28px; font-family:var(--mono); font-size:.72rem; letter-spacing:.26em; text-transform:uppercase; color:var(--dim); }
-  .diode { width:10px; height:10px; background:var(--primary); box-shadow:var(--glow); flex:none; clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
-  .wordmark { font-family:var(--disp); font-weight:800; font-size:clamp(2.5rem,10vw,5.2rem); line-height:1; letter-spacing:.06em; color:var(--text); text-shadow:0 0 30px rgba(0,170,255,.3); }
-  .wordmark b { color:var(--primary); text-shadow:var(--glow); }
-  /* "STORE" sits under the wordmark as its subtitle, at display size but
-     tracked wide so it reads as a label on the mark, not a second word in it. */
-  .wordmark-sub { font-family:var(--disp); font-weight:600; font-size:clamp(1rem,3.4vw,1.85rem);
-    letter-spacing:.42em; text-indent:.42em; color:var(--primary); text-shadow:var(--glow); margin-top:12px; }
-  .lede { margin-top:26px; max-width:60ch; color:var(--dim); font-size:1.03rem; }
-  .lede b { color:var(--text); }
-  .stamp { margin-top:14px; font-family:var(--mono); font-size:.8rem; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); }
-  .stamp em { font-style:normal; color:var(--dim); }
-
-  /* ── CTAs ── */
-  .cta { margin-top:34px; display:flex; gap:14px; flex-wrap:wrap; }
-  .btn { font-family:var(--mono); font-size:.9rem; letter-spacing:.1em; text-transform:uppercase; text-decoration:none;
-    padding:16px 30px; clip-path:var(--clip); border:1px solid var(--border-2); color:var(--secondary);
-    background:var(--surface); display:inline-flex; align-items:center; gap:9px; cursor:pointer;
-    transition:box-shadow .18s ease, background .18s ease, color .18s ease, transform .18s ease; }
-  .btn:hover { color:var(--text); background:var(--surface-2); box-shadow:0 0 22px rgba(0,170,255,.18); transform:translateY(-1px); }
-  .btn:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
-  .btn.primary { background:rgba(0,170,255,.14); border-color:var(--primary); color:var(--primary); text-shadow:var(--glow);
-    box-shadow:inset 0 0 0 1px rgba(0,170,255,.25), 0 0 24px rgba(0,170,255,.18); }
-  .btn.primary:hover { background:rgba(0,170,255,.22); color:var(--text); }
-  /* amber, matching the PRE-ALPHA chip and the bar icon */
-  .btn.ghost { color:var(--human); border-color:rgba(255,209,102,.4); }
-  .btn.ghost:hover { color:var(--human); border-color:var(--human);
-    background:var(--surface-2); box-shadow:0 0 22px rgba(255,209,102,.22); }
-  .btn.ghost:focus-visible { outline-color:var(--human); }
-  .btn small { font-size:.62rem; letter-spacing:.14em; opacity:.7; }
-
-  /* ── terminal panel ── */
-  .term { font-family:var(--mono); }
-  .term-bar { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:9px 16px;
-    border-bottom:1px solid var(--border); font-size:.64rem; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); }
-  .term-body { padding:22px 24px; overflow-x:auto; }
-  .term-body pre { margin:0; font-family:var(--mono); font-size:.95rem; line-height:2; color:var(--text); }
+  .term-bar { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:8px 15px;
+    border-bottom:1px solid var(--border); font-family:var(--mono); font-size:.62rem; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--dim); }
+  .term-body { padding:18px 20px; overflow-x:auto; }
+  .term-body pre { margin:0; font-family:var(--mono); font-size:.9rem; line-height:1.95; color:var(--text); }
   .term-body .ps1 { color:var(--primary); text-shadow:var(--glow); user-select:none; }
   .term-body .cm { color:var(--faint); }
   .copy { font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; cursor:pointer;
-    background:none; border:1px solid var(--border); color:var(--dim); padding:4px 10px; }
+    background:none; border:1px solid var(--border); color:var(--dim); padding:4px 10px;
+    transition:color .18s ease, border-color .18s ease; }
   .copy:hover { color:var(--primary); border-color:var(--border-2); text-shadow:var(--glow); }
   .copy:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
-  .term-note { margin-top:14px; font-size:.86rem; color:var(--dim); }
-  .term-note code { font-family:var(--mono); color:var(--text); font-size:.9em; }
-  .term-note a { text-decoration:none; border-bottom:1px solid var(--border-2); }
 
-  /* ── catalogue toolbar ── */
-  .toolbar { display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-bottom:22px; }
-  .search { flex:1 1 260px; min-width:0; position:relative; display:flex; align-items:center; }
-  .search::before { content:"⌕"; position:absolute; left:13px; color:var(--primary); text-shadow:var(--glow); font-size:1.05rem; pointer-events:none; }
-  .search input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
-    font-family:var(--mono); font-size:.92rem; letter-spacing:.04em; padding:11px 14px 11px 34px; clip-path:var(--clip-sm);
-    transition:border-color .18s ease, box-shadow .18s ease; }
-  .search input::placeholder { color:var(--faint); }
-  .search input:focus { outline:none; border-color:var(--border-2); box-shadow:0 0 18px rgba(0,170,255,.14); }
-  .count { font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); white-space:nowrap; }
+  /* spec table — the facts a reader came for, in one scan */
+  .spec { padding:4px 20px; }
+  .spec dl { margin:0; display:grid; grid-template-columns:132px 1fr; }
+  .spec dt, .spec dd { margin:0; padding:11px 0; border-top:1px solid var(--border);
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.03em; }
+  .spec dt { color:var(--faint); letter-spacing:.12em; text-transform:uppercase; font-size:.68rem; padding-top:13px; }
+  .spec dd { color:var(--secondary); word-break:break-all; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  .spec dl > dt:first-of-type, .spec dl > dt:first-of-type + dd { border-top:none; }
+  .spec dd a { color:var(--primary); text-decoration:none; border-bottom:1px solid var(--border-2); }
 
-  .tabs { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px; }
-  .tab { font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; cursor:pointer;
-    background:var(--surface); border:1px solid var(--border); color:var(--dim); padding:6px 13px; clip-path:var(--clip-sm);
-    transition:color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease; }
-  .tab:hover { color:var(--secondary); border-color:var(--border-2); }
-  .tab:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
-  .tab[aria-pressed="true"] { color:var(--primary); border-color:var(--primary); text-shadow:var(--glow);
-    background:rgba(0,170,255,.1); box-shadow:inset 0 0 0 1px rgba(0,170,255,.2); }
+  .shots { display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; }
+  .shots img { height:220px; width:auto; flex:none; border:1px solid var(--border-2); clip-path:var(--clip); background:var(--surface); }
 
-  /* ── app cards ── */
-  .cards { display:flex; flex-direction:column; gap:14px; }
-  .card { padding:22px 24px; }
-  .card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; }
-  .card-title { font-family:var(--disp); font-weight:600; font-size:1rem; letter-spacing:.02em; color:var(--text);
-    display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
-  .card-icon { width:26px; height:26px; object-fit:contain; flex:none;
-    border:1px solid var(--border); background:var(--surface-2); clip-path:var(--clip-sm); }
-  .card-id { font-family:var(--mono); font-size:.78rem; letter-spacing:.04em; color:var(--dim); font-weight:400; text-transform:none; }
-  .card-desc { margin-top:10px; color:var(--dim); font-size:.92rem; line-height:1.55; max-width:66ch; }
-  .card-meta { margin-top:14px; display:flex; align-items:center; flex-wrap:wrap; gap:7px;
-    font-family:var(--mono); font-size:.72rem; letter-spacing:.06em; color:var(--faint); }
-  .badge { color:var(--secondary); border:1px solid var(--border); padding:3px 8px; clip-path:var(--clip-sm); }
-  .badge.src { color:var(--primary); border-color:var(--border-2); }
-  .card-actions { display:flex; gap:9px; flex-wrap:wrap; align-items:center; flex:none; }
-  .act { font-family:var(--mono); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; text-decoration:none;
-    cursor:pointer; background:var(--surface); border:1px solid var(--border); color:var(--dim);
-    padding:8px 13px; clip-path:var(--clip-sm); white-space:nowrap;
-    transition:color .18s ease, border-color .18s ease, box-shadow .18s ease, background .18s ease; }
-  .act:hover { color:var(--secondary); border-color:var(--border-2); background:var(--surface-2); }
-  .act:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
-  .act.main { color:var(--primary); border-color:var(--primary); text-shadow:var(--glow); background:rgba(0,170,255,.12); }
-  .act.main:hover { background:rgba(0,170,255,.2); color:var(--text); }
-  /* The install command IS the card's call to action, so it gets the prompt,
-     the copy button and the focus ring - not a detached button elsewhere. */
-  .card-cmd { margin-top:16px; padding-top:14px; border-top:1px solid var(--border);
-    display:flex; align-items:center; gap:12px; }
-  /* The ref can be long (ghcr.io/org/aura-apps/com.example.app); it scrolls in
-     its own track rather than widening the card or wrapping mid-identifier. */
-  .cmd-text { flex:1 1 auto; min-width:0; overflow-x:auto; white-space:nowrap;
-    font-family:var(--mono); font-size:.86rem; letter-spacing:.02em; color:var(--secondary);
-    padding-bottom:2px; scrollbar-width:thin; scrollbar-color:var(--border-2) transparent; }
-  .cmd-text::-webkit-scrollbar { height:4px; }
-  .cmd-text::-webkit-scrollbar-thumb { background:var(--border-2); }
-  .cmd-text .ps1 { color:var(--primary); text-shadow:var(--glow); user-select:none; margin-right:9px; }
-  .card-cmd .copy { flex:none; }
-
-  /* ── catalogue states — loading / empty / error all render as real panels,
-        so a store with nothing in it still looks deliberate. ── */
-  .state { padding:34px 28px; text-align:center; }
-  .state .st-mark { font-family:var(--mono); font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--primary); text-shadow:var(--glow); }
-  .state.err .st-mark { color:var(--danger); text-shadow:0 0 8px rgba(255,92,92,.4); }
-  .state h3 { margin-top:14px; font-family:var(--disp); font-weight:600; font-size:1rem; letter-spacing:.03em; text-transform:uppercase; color:var(--text); }
-  .state p { margin-top:12px; color:var(--dim); font-size:.92rem; max-width:56ch; margin-left:auto; margin-right:auto; }
-  .state p + p { margin-top:9px; }
-  .state code { font-family:var(--mono); color:var(--secondary); font-size:.88em; }
-  .state .cta { justify-content:center; margin-top:24px; }
-  .state .btn { padding:13px 24px; font-size:.8rem; }
-
-  /* ── publishing lanes ── */
-  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-  .pr { padding:24px 24px; }
-  .pr h3 { font-family:var(--disp); font-weight:600; font-size:.94rem; letter-spacing:.02em; text-transform:uppercase; color:var(--secondary); margin-bottom:10px; }
-  .pr p { color:var(--dim); font-size:.9rem; line-height:1.55; }
-  .pr code { font-family:var(--mono); color:var(--text); font-size:.85em; }
-  .pr b { color:var(--text); font-weight:600; }
-  .pr .cmd { margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
-    font-family:var(--mono); font-size:.76rem; color:var(--dim); word-break:break-word; }
-  .pr .cmd code { color:var(--secondary); font-size:1em; }
-  .note { margin-top:18px; font-family:var(--mono); font-size:.92rem; line-height:1.6; letter-spacing:.04em; color:var(--human); opacity:.92; }
+  /* ── section pages (connect / publish) ── */
+  .page { max-width:860px; display:flex; flex-direction:column; gap:18px; padding-top:16px; }
+  /* Eyebrow and title are one unit, so they sit close together and the page's
+     own gap opens up below them rather than between them. */
+  .page-head { display:flex; flex-direction:column; gap:7px; }
+  .page h1 { font-family:var(--disp); font-weight:700; font-size:1.3rem; letter-spacing:.04em; text-transform:uppercase; }
+  .page .tag { font-family:var(--mono); font-size:.7rem; letter-spacing:.2em; text-transform:uppercase; color:var(--primary); text-shadow:var(--glow); }
+  .page p { font-size:.92rem; color:var(--dim); max-width:66ch; }
+  .page p b { color:var(--text); font-weight:600; }
+  .page code { font-family:var(--mono); color:var(--secondary); font-size:.9em; }
+  .page a { text-decoration:none; border-bottom:1px solid var(--border-2); }
+  .lanes { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; }
+  .lane { padding:19px 19px; }
+  .lane h3 { font-family:var(--disp); font-weight:600; font-size:.86rem; letter-spacing:.02em; text-transform:uppercase; color:var(--secondary); margin-bottom:9px; }
+  .lane p { font-size:.84rem; line-height:1.5; }
+  .lane .cmd { margin-top:11px; padding-top:11px; border-top:1px solid var(--border);
+    font-family:var(--mono); font-size:.72rem; color:var(--dim); word-break:break-word; }
+  .note { font-family:var(--mono); font-size:.86rem; line-height:1.6; letter-spacing:.03em; color:var(--human); opacity:.94; }
   .note::before { content:"⚠ "; }
-  .note a { color:var(--human); }
+  .note a { color:var(--human); border-bottom-color:rgba(255,209,102,.4); }
 
-  footer { padding:44px 0 64px; border-top:1px solid var(--border); display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; align-items:center; }
-  .foot { display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
-  .foot-links { display:flex; gap:12px; align-items:center; font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; }
+  /* ── states: loading / empty / no-match / error / unknown route ── */
+  .state { padding:40px 30px; text-align:center; grid-column:1/-1; }
+  .st-mark { font-family:var(--mono); font-size:.68rem; letter-spacing:.22em; text-transform:uppercase; color:var(--primary); text-shadow:var(--glow); }
+  .state.err .st-mark { color:var(--danger); text-shadow:0 0 8px rgba(255,92,92,.4); }
+  .state h3 { margin-top:12px; font-family:var(--disp); font-weight:600; font-size:.98rem; letter-spacing:.03em; text-transform:uppercase; color:var(--text); }
+  .state p { margin:11px auto 0; color:var(--dim); font-size:.88rem; max-width:54ch; }
+  .state code { font-family:var(--mono); color:var(--secondary); }
+  .state .acts { display:flex; gap:11px; flex-wrap:wrap; justify-content:center; margin-top:20px; }
+  .btn { font-family:var(--mono); font-size:.74rem; letter-spacing:.11em; text-transform:uppercase; text-decoration:none;
+    padding:11px 21px; clip-path:var(--clip-sm); border:1px solid var(--border-2); color:var(--secondary);
+    background:var(--surface); display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+    transition:box-shadow .18s ease, background .18s ease, color .18s ease; }
+  .btn:hover { color:var(--text); background:var(--surface-2); box-shadow:0 0 18px rgba(0,170,255,.16); }
+  .btn:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+  .btn.primary { background:rgba(0,170,255,.14); border-color:var(--primary); color:var(--primary); text-shadow:var(--glow); }
+  .btn.primary:hover { background:rgba(0,170,255,.22); color:var(--text); }
+
+  footer { padding:34px 0 52px; border-top:1px solid var(--border); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; }
+  .foot { display:flex; align-items:center; gap:11px; font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+  .foot-links { display:flex; gap:11px; align-items:center; font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; }
   .foot-links a { color:var(--dim); text-decoration:none; }
   .foot-links a:hover { color:var(--primary); text-shadow:var(--glow); }
 
-  @media (max-width:720px) {
-    .grid3 { grid-template-columns:1fr; }
-    section { padding:42px 0; }
-    .cta .btn { flex:1 1 100%; justify-content:center; }
+  @media (max-width:900px) {
+    .catalogue { grid-template-columns:1fr; gap:20px; }
+    /* The rail becomes a horizontal chip row above the grid. */
+    .rail { position:static; flex-direction:row; flex-wrap:wrap; gap:6px; }
+    .rail-h { display:none; }
+    .rail-i { width:auto; border-color:var(--border); background:var(--surface); }
+    .lanes { grid-template-columns:1fr; }
+  }
+  @media (max-width:640px) {
+    .appbar .in { gap:11px; }
+    .search { margin-left:0; max-width:none; order:3; flex-basis:100%; }
     .statusbar .in .hide { display:none; }
-    .card-head { flex-direction:column; }
+    .spec dl { grid-template-columns:1fr; }
+    .spec dt { padding-bottom:0; border-top:1px solid var(--border); }
+    .spec dd { padding-top:4px; border-top:none; }
+    .dt-head h1 { font-size:1.25rem; }
   }
 </style>
 </head>
@@ -271,115 +337,48 @@
   </div>
 </div>
 
-<div class="wrap">
-
-  <!-- HERO -->
-  <header class="hero">
-    <div class="kicker"><span class="diode"></span> Official catalogue · Curated · Open source</div>
-    <h1 class="wordmark">AURA<b>OS</b></h1>
-    <div class="wordmark-sub">STORE</div>
-    <p class="lede">Apps, agents and capabilities for <b>AuraOS</b> — each one sandboxed in its own
-      container, installed with one command, and reviewed before it lands here.
-      We host the <b>catalogue</b>, not the code: every app stays in its author&rsquo;s
-      own repository or registry.</p>
-    <p class="stamp"><em>One container. Every tool. Fully yours.</em></p>
-
-    <nav class="cta">
-      <a class="btn primary" href="#catalogue">▸ Browse the catalogue</a>
-      <a class="btn" href="#add">Add to your AuraOS</a>
-      <a class="btn ghost" href="https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Submit an app <small>↗</small></a>
+<div class="appbar">
+  <div class="in">
+    <a class="brand" href="#/">
+      <span class="mark">Aura<b>OS</b></span>
+      <span class="sub">Store</span>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="#/" data-route="browse">Browse</a>
+      <a href="#/connect" data-route="connect">Connect</a>
+      <a href="#/publish" data-route="publish">Publish</a>
     </nav>
-  </header>
+    <label class="search">
+      <input type="search" id="q" placeholder="Search apps…" autocomplete="off" spellcheck="false" aria-label="Search apps" disabled>
+    </label>
+  </div>
+</div>
 
-  <!-- CATALOGUE -->
-  <section id="catalogue">
-    <div class="sec-head">
-      <span class="tag">// Catalogue</span>
-      <h2>What you can install</h2>
+<div class="masthead">
+  <div class="in">
+    <p>Apps, agents and capabilities for <b>AuraOS</b> — each sandboxed, each installed with one command.</p>
+    <span class="meta" id="masthead-meta">Curated · we host the catalogue, not the code</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="view">
+    <div class="panel brackets state">
+      <div class="st-mark"><span class="led">●</span> Reading index.json</div>
+      <h3>Loading the catalogue</h3>
+      <p>This page renders straight from the same index document your AuraOS instance consumes.</p>
     </div>
-
-    <div class="toolbar">
-      <label class="search">
-        <span class="sr-only" hidden>Search apps</span>
-        <input type="search" id="q" placeholder="Search by name, id, publisher or tag…" autocomplete="off" spellcheck="false" aria-label="Search apps" disabled>
-      </label>
-      <span class="count" id="count">Loading…</span>
+  </div>
+  <noscript>
+    <div class="panel brackets state">
+      <div class="st-mark">No JavaScript</div>
+      <h3>Read the index directly</h3>
+      <p>The catalogue is a plain text file. Open <a href="./index.yaml">index.yaml</a> or <a href="./index.json">index.json</a>.</p>
     </div>
+  </noscript>
+</main>
 
-    <div class="tabs" id="tabs" role="group" aria-label="Filter by category"></div>
-
-    <div class="cards" id="cards">
-      <div class="panel brackets state">
-        <div class="st-mark"><span class="led">●</span> Reading index.json</div>
-        <h3>Loading the catalogue</h3>
-        <p>One moment — this page renders straight from the same
-          <code>index</code> document your AuraOS instance consumes.</p>
-      </div>
-    </div>
-
-    <noscript>
-      <div class="panel brackets state" style="margin-top:14px">
-        <div class="st-mark">No JavaScript</div>
-        <h3>Read the index directly</h3>
-        <p>The catalogue is a plain text file. Open
-          <a href="./index.yaml">index.yaml</a> or <a href="./index.json">index.json</a>.</p>
-      </div>
-    </noscript>
-  </section>
-
-  <!-- ADD THE STORE -->
-  <section id="add">
-    <div class="sec-head">
-      <span class="tag">// Connect</span>
-      <h2>Add this store to your AuraOS</h2>
-    </div>
-    <div class="panel brackets term">
-      <div class="term-bar"><span>bash</span><button class="copy" type="button" data-copy="add">Copy</button></div>
-      <div class="term-body"><pre><span class="ps1">$</span> aura nexus registry add official \
-    https://nexus.aura.lakner.io/index.yaml \
-    <span class="cm">--kind git-index --priority 10</span>
-<span class="ps1">$</span> aura nexus search              <span class="cm"># then browse it in the Nexus app</span></pre></div>
-    </div>
-    <p class="term-note">Priority <code>10</code> sits behind the built-in <code>local</code> registry, so an app you are
-      developing locally still shadows the published one. Don&rsquo;t have AuraOS yet?
-      <a href="https://aura.lakner.io">Start here</a>.</p>
-  </section>
-
-  <!-- PUBLISH -->
-  <section id="publish">
-    <div class="sec-head">
-      <span class="tag">// Publish</span>
-      <h2>Get your app listed</h2>
-    </div>
-    <div class="grid3">
-      <div class="panel brackets pr">
-        <h3>Runs from source</h3>
-        <p>Push your app to a git repo with <code>app.manifest.json</code> at the root and tag a release.
-          AuraOS installs dependencies on first launch — nothing to build.</p>
-        <p class="cmd"><code>sources.git</code></p>
-      </div>
-      <div class="panel brackets pr">
-        <h3>Needs a build</h3>
-        <p>Build in <b>your own CI</b> and push the result as an OCI artifact. A reusable GitHub
-          Action in the store repo does build → push for you.</p>
-        <p class="cmd"><code>aura nexus app publish --kind oci</code></p>
-      </div>
-      <div class="panel brackets pr">
-        <h3>Is a service or image</h3>
-        <p>Wrap any existing container image with a thin adapter and <code>runtime: "raw"</code>.
-          Upstream stays untouched, so upgrades are still <code>docker pull</code>.</p>
-        <p class="cmd"><code>sources.oci</code></p>
-      </div>
-    </div>
-    <p class="term-note" style="margin-top:18px">Then add one YAML file to <code>apps/</code> and open a pull request. CI
-      validates the schema, checks that your <code>id</code> matches your manifest, and confirms every
-      declared channel resolves to a tag that exists.
-      Full guide in <a href="https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">CONTRIBUTING.md</a>.</p>
-    <p class="note">Third-party submissions are not open yet — the AuraOS store UI still installs
-      without showing you the permission diff, and we won&rsquo;t list other people&rsquo;s code until it does.
-      The reasoning is in <a href="https://github.com/lacky95/auraos-store/blob/main/POLICY.md" target="_blank" rel="noopener">POLICY.md</a>.</p>
-  </section>
-
+<div class="wrap">
   <footer>
     <div class="foot"><span class="led">●</span> AuraOS Store · Curated, not hosted</div>
     <div class="foot-links">
@@ -400,17 +399,25 @@
    with no build step and no client-side YAML parser, while AuraOS itself keeps
    reading index.yaml.
 
+   Routing is hash-based so the whole store stays one static file that any
+   plain file host can serve: #/ , #/app/<id> , #/connect , #/publish .
+
    Entry text is author-supplied, so every value goes in via textContent and
    every URL is checked to be https: before it becomes an href or a src. */
 (function () {
   "use strict";
 
-  var cardsEl = document.getElementById("cards");
-  var tabsEl  = document.getElementById("tabs");
-  var countEl = document.getElementById("count");
-  var qEl     = document.getElementById("q");
+  var viewEl = document.getElementById("view");
+  var navEl  = document.getElementById("nav");
+  var qEl    = document.getElementById("q");
+  var searchEl = document.querySelector(".search");
+  var metaEl = document.getElementById("masthead-meta");
 
-  var apps = [], featured = [], categories = [], activeCat = "", query = "";
+  var apps = [], featured = [], categories = [], loadError = null;
+  var activeCat = "", query = "";
+
+  var REPO = "https://github.com/lacky95/auraos-store";
+  var REGISTRY_CMD = "aura nexus registry add official \\\n    https://nexus.aura.lakner.io/index.yaml \\\n    --kind git-index --priority 10";
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -418,6 +425,7 @@
     if (text != null) n.textContent = text;
     return n;
   }
+  function frag() { return document.createDocumentFragment(); }
 
   /* Only https URLs become hrefs/srcs. The schema already enforces this at
      review time; enforcing it again here means a bad entry can never turn into
@@ -426,83 +434,55 @@
     if (typeof u !== "string") return null;
     try { return new URL(u).protocol === "https:" ? u : null; } catch (e) { return null; }
   }
+  function extLink(href, label, cls) {
+    var a = el("a", cls || null, label);
+    a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer";
+    return a;
+  }
 
-  /* The source a user would actually install from, rendered the way the entry
-     declares it: OCI ref, git ref, or nothing if the entry is malformed. */
-  function sourceLabel(e) {
+  /* `icon` is a 1-3 character glyph, not an image URL: it comes straight from
+     the app's manifest (capped at 3 chars there) and AuraOS renders it as a
+     text badge. Same first-letter fallback the Nexus detail page uses. */
+  function glyphOf(e) {
+    var g = typeof e.icon === "string" ? e.icon.trim().slice(0, 3) : "";
+    return g || String(e.name || e.id).charAt(0).toUpperCase();
+  }
+  function sourceOf(e) {
     var s = e.sources || {};
-    if (s.oci && s.oci.ref) return ["oci", s.oci.ref];
-    if (s.git && s.git.ref) return ["git", s.git.ref];
+    if (s.oci && s.oci.ref) return { kind: "oci", ref: s.oci.ref };
+    if (s.git && s.git.ref) return { kind: "git", ref: s.git.ref, branch: s.git["default-branch"] };
     return null;
   }
-
-  function channelLabel(e) {
-    var ch = e.channels || {}, names = Object.keys(ch);
-    if (!names.length) return null;
-    var pick = ch.stable ? "stable" : names[0];
-    var c = ch[pick] || {};
-    var tag = c["git-tag"] || c["oci-tag"] || c.branch || null;
-    return tag ? pick + " · " + tag : pick;
+  function channelsOf(e) {
+    var ch = e.channels || {};
+    return Object.keys(ch).map(function (name) {
+      var c = ch[name] || {};
+      return { name: name, tag: c["git-tag"] || c["oci-tag"] || null };
+    });
   }
+  function primaryChannel(e) {
+    var list = channelsOf(e);
+    if (!list.length) return null;
+    var stable = list.filter(function (c) { return c.name === "stable"; })[0];
+    return stable || list[0];
+  }
+  function installCmd(id) { return "aura nexus app install " + id; }
+  function byId(id) { return apps.filter(function (a) { return a.id === id; })[0] || null; }
 
-  function card(e) {
-    var root = el("div", "panel brackets card");
-    var head = el("div", "card-head");
-    var left = el("div");
-
-    var title = el("div", "card-title");
-    var icon = safeUrl(e.icon);
-    if (icon) {
-      var img = el("img", "card-icon");
-      img.src = icon; img.alt = ""; img.loading = "lazy"; img.width = 26; img.height = 26;
-      /* A dead icon URL would otherwise leave a broken-image glyph in the row. */
-      img.addEventListener("error", function () { img.remove(); });
-      title.appendChild(img);
-    }
-    title.appendChild(el("span", null, e.name || e.id));
-    if (featured.indexOf(e.id) !== -1) title.appendChild(el("span", "badge src", "featured"));
-    title.appendChild(el("span", "card-id", "· " + e.id));
-    left.appendChild(title);
-
-    if (e.description) left.appendChild(el("div", "card-desc", e.description));
-
-    var meta = el("div", "card-meta");
-    if (e.publisher) meta.appendChild(el("span", null, e.publisher));
-    var src = sourceLabel(e);
-    if (src) meta.appendChild(el("span", "badge src", src[0] + " · " + src[1]));
-    var chan = channelLabel(e);
-    if (chan) meta.appendChild(el("span", "badge", chan));
-    (e.categories || []).forEach(function (c) { meta.appendChild(el("span", "badge", c)); });
-    (e.tags || []).slice(0, 4).forEach(function (t) { meta.appendChild(el("span", null, "#" + t)); });
-    if (meta.childNodes.length) left.appendChild(meta);
-
-    head.appendChild(left);
-
-    var home = safeUrl(e.homepage);
-    if (home) {
-      var actions = el("div", "card-actions");
-      var a = el("a", "act", "Homepage ↗");
-      a.href = home; a.target = "_blank"; a.rel = "noopener noreferrer";
-      actions.appendChild(a);
-      head.appendChild(actions);
-    }
-    root.appendChild(head);
-
-    /* A web page cannot install into your OS, so the card shows the command
-       that can, with the copy button on the command itself. */
-    var cmd = "aura nexus app install " + e.id;
-    var cmdRow = el("div", "card-cmd");
-    var text = el("span", "cmd-text");
-    text.appendChild(el("span", "ps1", "$"));
-    text.appendChild(el("code", null, cmd));
-    cmdRow.appendChild(text);
-    var btn = el("button", "copy", "Copy");
-    btn.type = "button";
-    btn.setAttribute("aria-label", "Copy the install command for " + e.id);
-    btn.addEventListener("click", function () { copy(cmd, btn, "Copy"); });
-    cmdRow.appendChild(btn);
-    root.appendChild(cmdRow);
-    return root;
+  function copy(text, btn, restore) {
+    var done = function (okd) {
+      btn.textContent = okd ? "Copied" : "Ctrl+C";
+      setTimeout(function () { btn.textContent = restore; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+    } else { done(false); }
+  }
+  function copyBtn(text, cls, label) {
+    var b = el("button", cls, label || "Copy");
+    b.type = "button";
+    b.addEventListener("click", function (ev) { ev.preventDefault(); ev.stopPropagation(); copy(text, b, label || "Copy"); });
+    return b;
   }
 
   function state(cls, mark, heading, paras, links) {
@@ -511,18 +491,47 @@
     root.appendChild(el("h3", null, heading));
     paras.forEach(function (p) { root.appendChild(el("p", null, p)); });
     if (links && links.length) {
-      var nav = el("nav", "cta");
+      var acts = el("div", "acts");
       links.forEach(function (l) {
         var a = el("a", "btn" + (l.primary ? " primary" : ""), l.label);
         a.href = l.href;
-        if (l.href.indexOf("#") !== 0) { a.target = "_blank"; a.rel = "noopener"; }
-        nav.appendChild(a);
+        if (l.href.charAt(0) !== "#" && l.href.charAt(0) !== ".") { a.target = "_blank"; a.rel = "noopener"; }
+        acts.appendChild(a);
       });
-      root.appendChild(nav);
+      root.appendChild(acts);
     }
     return root;
   }
 
+  /* ── card ───────────────────────────────────────────────────────────── */
+  function card(e) {
+    var root = el("div", "card");
+    var top = el("div", "card-top");
+    top.appendChild(el("span", "glyph", glyphOf(e)));
+
+    var idcol = el("div");
+    var name = el("div", "card-name");
+    var link = el("a", null, e.name || e.id);
+    link.href = "#/app/" + encodeURIComponent(e.id);
+    name.appendChild(link);
+    idcol.appendChild(name);
+    idcol.appendChild(el("div", "card-id", e.id));
+    top.appendChild(idcol);
+    root.appendChild(top);
+
+    if (e.description) root.appendChild(el("p", "card-desc", e.description));
+
+    var foot = el("div", "card-foot");
+    if (featured.indexOf(e.id) !== -1) foot.appendChild(el("span", "badge feat", "Featured"));
+    var src = sourceOf(e);
+    if (src) foot.appendChild(el("span", "badge src", src.kind));
+    (e.categories || []).slice(0, 2).forEach(function (c) { foot.appendChild(el("span", "badge", c)); });
+    foot.appendChild(copyBtn(installCmd(e.id), "copy-mini", "Copy install"));
+    root.appendChild(foot);
+    return root;
+  }
+
+  /* ── browse ─────────────────────────────────────────────────────────── */
   function matches(e) {
     if (activeCat && (e.categories || []).indexOf(activeCat) === -1) return false;
     if (!query) return true;
@@ -532,81 +541,315 @@
     return hay.indexOf(query) !== -1;
   }
 
-  function render() {
-    var visible = apps.filter(matches);
-    /* Featured first, then alphabetical — the index is already sorted by id. */
-    visible.sort(function (a, b) {
+  function renderBrowse() {
+    viewEl.textContent = "";
+
+    if (loadError) {
+      viewEl.appendChild(state("err", "✕ Index unreachable", "Could not load the catalogue", [
+        "index.json did not load (" + loadError + ").",
+        "The catalogue is a plain text file — you can always read it directly in the repository."
+      ], [{ label: "index.yaml", href: "./index.yaml" }, { label: "Store on GitHub", href: REPO }]));
+      return;
+    }
+    if (!apps.length) {
+      viewEl.appendChild(state("", "Catalogue empty", "Nothing published yet", [
+        "The store is live but the index carries no apps — third-party submissions are not open while the AuraOS install flow still skips the permission diff.",
+        "The tooling, schema and review process are in place. When the gate lifts, entries land here the day their pull request merges."
+      ], [
+        { label: "Read the policy", href: REPO + "/blob/main/POLICY.md" },
+        { label: "Submit an app", href: REPO + "/blob/main/CONTRIBUTING.md", primary: true }
+      ]));
+      return;
+    }
+
+    var wrapEl = el("div", "catalogue");
+
+    /* Rail: only categories some listed app actually uses — a filter that can
+       only ever return nothing is worse than no filter. */
+    var counts = {};
+    apps.forEach(function (a) {
+      (a.categories || []).forEach(function (c) { counts[c] = (counts[c] || 0) + 1; });
+    });
+    var rail = el("aside", "rail");
+    rail.appendChild(el("div", "rail-h", "Categories"));
+    var railItems = [{ slug: "", label: "All apps", n: apps.length }].concat(
+      categories.filter(function (c) { return counts[c.slug]; })
+        .map(function (c) { return { slug: c.slug, label: c.label || c.slug, n: counts[c.slug] }; }));
+    railItems.forEach(function (c) {
+      var b = el("button", "rail-i");
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(c.slug === activeCat));
+      b.appendChild(el("span", null, c.label));
+      b.appendChild(el("span", "n", String(c.n)));
+      b.addEventListener("click", function () { activeCat = c.slug; renderBrowse(); });
+      rail.appendChild(b);
+    });
+    wrapEl.appendChild(rail);
+
+    var visible = apps.filter(matches).slice().sort(function (a, b) {
       var fa = featured.indexOf(a.id) !== -1, fb = featured.indexOf(b.id) !== -1;
       if (fa !== fb) return fa ? -1 : 1;
       return String(a.id).localeCompare(String(b.id));
     });
 
-    cardsEl.textContent = "";
-    countEl.textContent = visible.length + (visible.length === 1 ? " app" : " apps") +
-      (visible.length !== apps.length ? " of " + apps.length : "");
+    var content = el("div", "content");
+    var head = el("div", "content-h");
+    var label = activeCat
+      ? (categories.filter(function (c) { return c.slug === activeCat; })[0] || {}).label || activeCat
+      : "All apps";
+    head.appendChild(el("h1", null, query ? "Results" : label));
+    head.appendChild(el("span", "count",
+      visible.length + (visible.length === 1 ? " app" : " apps") +
+      (visible.length !== apps.length ? " of " + apps.length : "")));
+    content.appendChild(head);
 
-    if (!apps.length) {
-      cardsEl.appendChild(state("", "Catalogue empty", "Nothing published yet", [
-        "The store is live but the index carries no apps — third-party submissions are not open while the AuraOS install flow still skips the permission diff.",
-        "The tooling, schema and review process are in place. When the gate lifts, entries land here the day their pull request merges."
-      ], [
-        { label: "Read the policy", href: "https://github.com/lacky95/auraos-store/blob/main/POLICY.md" },
-        { label: "Submit an app", href: "https://github.com/lacky95/auraos-store/blob/main/CONTRIBUTING.md", primary: true }
-      ]));
-      return;
-    }
+    var grid = el("div", "grid");
     if (!visible.length) {
-      cardsEl.appendChild(state("", "No matches", "Nothing here", [
-        "No app matches that filter. Try a different category, or clear the search."
+      grid.appendChild(state("", "No matches", "Nothing here", [
+        "No app matches that filter. Try another category, or clear the search."
       ]));
+    } else {
+      visible.forEach(function (e) { grid.appendChild(card(e)); });
+    }
+    content.appendChild(grid);
+    wrapEl.appendChild(content);
+    viewEl.appendChild(wrapEl);
+  }
+
+  /* ── app detail ─────────────────────────────────────────────────────── */
+  function renderDetail(id) {
+    viewEl.textContent = "";
+    var e = byId(id);
+    if (!e) {
+      viewEl.appendChild(state("err", "✕ Not listed", "No such app", [
+        "The catalogue has no entry with the id " + id + ".",
+        "It may have been removed, or the link may be out of date."
+      ], [{ label: "Back to all apps", href: "#/", primary: true }]));
       return;
     }
-    visible.forEach(function (e) { cardsEl.appendChild(card(e)); });
-  }
 
-  function buildTabs() {
-    tabsEl.textContent = "";
-    if (!apps.length) return;
-    /* Only offer categories that some listed app actually uses — a tab that
-       always yields "nothing here" is worse than no tab. */
-    var used = {};
-    apps.forEach(function (e) { (e.categories || []).forEach(function (c) { used[c] = true; }); });
-    var list = [{ slug: "", label: "All" }].concat(
-      categories.filter(function (c) { return used[c.slug]; }));
+    var back = el("a", "back");
+    back.href = "#/";
+    back.appendChild(el("span", "arrow", "←"));
+    back.appendChild(el("span", null, "All apps"));
+    viewEl.appendChild(back);
 
-    list.forEach(function (c) {
-      var b = el("button", "tab", (c.label || c.slug).toUpperCase());
-      b.type = "button";
-      b.setAttribute("aria-pressed", String(c.slug === activeCat));
-      b.addEventListener("click", function () {
-        activeCat = c.slug;
-        Array.prototype.forEach.call(tabsEl.children, function (n) { n.setAttribute("aria-pressed", "false"); });
-        b.setAttribute("aria-pressed", "true");
-        render();
+    var d = el("div", "detail");
+
+    var head = el("header", "dt-head");
+    head.appendChild(el("span", "glyph lg", glyphOf(e)));
+    var hcol = el("div");
+    hcol.appendChild(el("h1", null, e.name || e.id));
+    hcol.appendChild(el("div", "dt-id", e.id));
+    var badges = el("div", "dt-badges");
+    if (featured.indexOf(e.id) !== -1) badges.appendChild(el("span", "badge feat", "Featured"));
+    (e.categories || []).forEach(function (c) { badges.appendChild(el("span", "badge", c)); });
+    (e.tags || []).forEach(function (t) { badges.appendChild(el("span", "badge", "#" + t)); });
+    if (badges.childNodes.length) hcol.appendChild(badges);
+    head.appendChild(hcol);
+    d.appendChild(head);
+
+    if (e.description) d.appendChild(el("p", "dt-desc", e.description));
+
+    /* Install — the one thing a visitor is here to do. */
+    var term = el("div", "panel brackets");
+    var tbar = el("div", "term-bar");
+    tbar.appendChild(el("span", null, "Install"));
+    tbar.appendChild(copyBtn(installCmd(e.id), "copy"));
+    term.appendChild(tbar);
+    var tbody = el("div", "term-body");
+    var pre = el("pre");
+    pre.appendChild(el("span", "ps1", "$ "));
+    pre.appendChild(document.createTextNode(installCmd(e.id)));
+    tbody.appendChild(pre);
+    term.appendChild(tbody);
+    d.appendChild(term);
+
+    /* Spec — every fact the entry carries, in one scan. */
+    var spec = el("div", "panel brackets spec");
+    var dl = el("dl");
+    function row(term_, build) {
+      dl.appendChild(el("dt", null, term_));
+      var dd = el("dd");
+      build(dd);
+      dl.appendChild(dd);
+    }
+    var src = sourceOf(e);
+    if (src) {
+      row("Source", function (dd) {
+        dd.appendChild(el("span", "badge src", src.kind));
+        dd.appendChild(el("span", null, src.ref));
       });
-      tabsEl.appendChild(b);
+      if (src.branch) row("Default branch", function (dd) { dd.textContent = src.branch; });
+    }
+    var chans = channelsOf(e);
+    if (chans.length) {
+      row("Channels", function (dd) {
+        chans.forEach(function (c) {
+          dd.appendChild(el("span", "badge", c.tag ? c.name + " · " + c.tag : c.name));
+        });
+      });
+    }
+    if (e.publisher) row("Publisher", function (dd) { dd.textContent = e.publisher; });
+    var home = safeUrl(e.homepage);
+    if (home) row("Homepage", function (dd) { dd.appendChild(extLink(home, home)); });
+    row("App id", function (dd) { dd.textContent = e.id; });
+    spec.appendChild(dl);
+    d.appendChild(spec);
+
+    var shots = (e.screenshots || []).map(safeUrl).filter(Boolean);
+    if (shots.length) {
+      var strip = el("div", "shots");
+      shots.forEach(function (u) {
+        var img = el("img");
+        img.src = u; img.alt = (e.name || e.id) + " screenshot"; img.loading = "lazy";
+        img.addEventListener("error", function () { img.remove(); });
+        strip.appendChild(img);
+      });
+      d.appendChild(strip);
+    }
+
+    var foot = el("p", "note");
+    foot.appendChild(document.createTextNode("Listing is not vouching. We reviewed this entry's metadata and confirmed its source resolves — we did not audit the app's code, and its author can push a new tag at any time. "));
+    foot.appendChild(extLink(REPO + "/blob/main/POLICY.md", "What review means"));
+    d.appendChild(foot);
+
+    viewEl.appendChild(d);
+  }
+
+  /* ── connect / publish ──────────────────────────────────────────────── */
+  function renderConnect() {
+    viewEl.textContent = "";
+    var p = el("div", "page");
+    var ph = el("div", "page-head");
+    ph.appendChild(el("span", "tag", "// Connect"));
+    ph.appendChild(el("h1", null, "Add this store to your AuraOS"));
+    p.appendChild(ph);
+    p.appendChild(el("p", null,
+      "One command registers the catalogue. AuraOS fetches the index directly — it never clones this repository."));
+
+    var term = el("div", "panel brackets");
+    var tbar = el("div", "term-bar");
+    tbar.appendChild(el("span", null, "bash"));
+    tbar.appendChild(copyBtn(REGISTRY_CMD, "copy"));
+    term.appendChild(tbar);
+    var body = el("div", "term-body");
+    var pre = el("pre");
+    pre.appendChild(el("span", "ps1", "$ "));
+    pre.appendChild(document.createTextNode("aura nexus registry add official \\\n    https://nexus.aura.lakner.io/index.yaml \\\n    "));
+    pre.appendChild(el("span", "cm", "--kind git-index --priority 10"));
+    pre.appendChild(document.createTextNode("\n"));
+    pre.appendChild(el("span", "ps1", "$ "));
+    pre.appendChild(document.createTextNode("aura nexus search              "));
+    pre.appendChild(el("span", "cm", "# then browse it in the Nexus app"));
+    body.appendChild(pre);
+    term.appendChild(body);
+    p.appendChild(term);
+
+    var note = el("p");
+    note.appendChild(document.createTextNode("Priority "));
+    note.appendChild(el("code", null, "10"));
+    note.appendChild(document.createTextNode(" sits behind the built-in "));
+    note.appendChild(el("code", null, "local"));
+    note.appendChild(document.createTextNode(" registry, so an app you are developing locally still shadows the published one. Don't have AuraOS yet? "));
+    var a = el("a", null, "Start here");
+    a.href = "https://aura.lakner.io";
+    note.appendChild(a);
+    note.appendChild(document.createTextNode("."));
+    p.appendChild(note);
+    viewEl.appendChild(p);
+  }
+
+  var LANES = [
+    { h: "Runs from source", p: "Push your app to a git repo with app.manifest.json at the root and tag a release. AuraOS installs dependencies on first launch — nothing to build.", c: "sources.git" },
+    { h: "Needs a build", p: "Build in your own CI and push the result as an OCI artifact. A reusable GitHub Action in the store repo does build → push for you.", c: "aura nexus app publish --kind oci" },
+    { h: "Is a service or image", p: "Wrap any existing container image with a thin adapter and runtime: \"raw\". Upstream stays untouched, so upgrades are still docker pull.", c: "sources.oci" }
+  ];
+
+  function renderPublish() {
+    viewEl.textContent = "";
+    var p = el("div", "page");
+    var ph = el("div", "page-head");
+    ph.appendChild(el("span", "tag", "// Publish"));
+    ph.appendChild(el("h1", null, "Get your app listed"));
+    p.appendChild(ph);
+    p.appendChild(el("p", null,
+      "The store never hosts your code — it points at it. Pick the lane that matches what your app needs to run."));
+
+    var lanes = el("div", "lanes");
+    LANES.forEach(function (l) {
+      var n = el("div", "panel brackets lane");
+      n.appendChild(el("h3", null, l.h));
+      n.appendChild(el("p", null, l.p));
+      var cmd = el("p", "cmd");
+      cmd.appendChild(el("code", null, l.c));
+      n.appendChild(cmd);
+      lanes.appendChild(n);
     });
+    p.appendChild(lanes);
+
+    var how = el("p");
+    how.appendChild(document.createTextNode("Then add one YAML file to "));
+    how.appendChild(el("code", null, "apps/"));
+    how.appendChild(document.createTextNode(" and open a pull request. CI validates the schema, checks that your "));
+    how.appendChild(el("code", null, "id"));
+    how.appendChild(document.createTextNode(" matches your manifest, and confirms every declared channel resolves to a tag that exists. Full guide in "));
+    how.appendChild(extLink(REPO + "/blob/main/CONTRIBUTING.md", "CONTRIBUTING.md"));
+    how.appendChild(document.createTextNode("."));
+    p.appendChild(how);
+
+    var note = el("p", "note");
+    note.appendChild(document.createTextNode("Third-party submissions are not open yet — the AuraOS store UI still installs without showing you the permission diff, and we won't list other people's code until it does. The reasoning is in "));
+    note.appendChild(extLink(REPO + "/blob/main/POLICY.md", "POLICY.md"));
+    note.appendChild(document.createTextNode("."));
+    p.appendChild(note);
+    viewEl.appendChild(p);
   }
 
-  function copy(text, btn, restore) {
-    var done = function (ok) {
-      btn.textContent = ok ? "Copied" : "Ctrl+C";
-      setTimeout(function () { btn.textContent = restore; }, 1600);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
-    } else { done(false); }
+  /* ── router ─────────────────────────────────────────────────────────── */
+  function currentRoute() {
+    var h = (location.hash || "#/").replace(/^#/, "");
+    if (h.indexOf("/app/") === 0) return { name: "app", id: decodeURIComponent(h.slice(5)) };
+    if (h === "/connect") return { name: "connect" };
+    if (h === "/publish") return { name: "publish" };
+    return { name: "browse" };
   }
 
-  /* Copy buttons on the static terminal panels. */
-  var SNIPPETS = {
-    add: "aura nexus registry add official \\\n    https://nexus.aura.lakner.io/index.yaml \\\n    --kind git-index --priority 10"
-  };
-  Array.prototype.forEach.call(document.querySelectorAll(".copy[data-copy]"), function (b) {
-    b.addEventListener("click", function () { copy(SNIPPETS[b.dataset.copy] || "", b, "Copy"); });
+  function route() {
+    var r = currentRoute();
+    /* Search belongs to the catalogue, so it leaves the toolbar entirely on
+       the other pages rather than sitting there inert. */
+    var searchable = r.name === "browse";
+    searchEl.hidden = !searchable;
+    qEl.disabled = !searchable || (!apps.length && !loadError);
+    metaEl.textContent = r.name === "browse" && apps.length
+      ? apps.length + (apps.length === 1 ? " app listed" : " apps listed")
+      : "Curated · we host the catalogue, not the code";
+
+    Array.prototype.forEach.call(navEl.children, function (a) {
+      var mine = a.getAttribute("data-route");
+      if (mine === r.name || (mine === "browse" && r.name === "app")) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+
+    if (r.name === "app") renderDetail(r.id);
+    else if (r.name === "connect") renderConnect();
+    else if (r.name === "publish") renderPublish();
+    else renderBrowse();
+  }
+
+  window.addEventListener("hashchange", function () {
+    route();
+    /* A hash change is a page change: start the new view at the top. */
+    if (window.scrollTo) window.scrollTo(0, 0);
   });
 
-  qEl.addEventListener("input", function () { query = qEl.value.trim().toLowerCase(); render(); });
+  qEl.addEventListener("input", function () {
+    query = qEl.value.trim().toLowerCase();
+    /* Typing is a request to search the catalogue, wherever you were. */
+    if (currentRoute().name !== "browse") { location.hash = "#/"; return; }
+    renderBrowse();
+  });
 
   fetch("./index.json", { cache: "no-cache" })
     .then(function (r) {
@@ -617,22 +860,13 @@
       apps = Array.isArray(doc.apps) ? doc.apps.filter(function (a) { return a && a.id; }) : [];
       featured = Array.isArray(doc.featured) ? doc.featured : [];
       categories = Array.isArray(doc.categories) ? doc.categories : [];
-      qEl.disabled = apps.length === 0;
-      buildTabs();
-      render();
+      route();
     })
     .catch(function (err) {
       /* Never leave the loading panel up: a stuck spinner reads as a broken
          page, while a stated failure tells the user where the data actually is. */
-      countEl.textContent = "unavailable";
-      cardsEl.textContent = "";
-      cardsEl.appendChild(state("err", "✕ Index unreachable", "Could not load the catalogue", [
-        "index.json did not load (" + err.message + ").",
-        "The catalogue is a plain text file — you can always read it directly in the repository."
-      ], [
-        { label: "index.yaml", href: "./index.yaml" },
-        { label: "Store on GitHub", href: "https://github.com/lacky95/auraos-store" }
-      ]));
+      loadError = err.message;
+      route();
     });
 })();
 </script>
