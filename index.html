@@ -256,8 +256,47 @@
   .get-os a { color:var(--primary); text-decoration:none; border-bottom:1px solid var(--border-2); }
   .get-os a:hover { text-shadow:var(--glow); }
 
-  .shots { display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; }
-  .shots img { height:220px; width:auto; flex:none; border:1px solid var(--border-2); clip-path:var(--clip); background:var(--surface); }
+  /* ── screenshots ─────────────────────────────────────────────────────
+     A set of pictures is the main thing a person judges an app on, so the
+     strip is a way IN to each image rather than the whole presentation:
+     thumbnails scroll, clicking one opens it full size. */
+  .shots { display:flex; gap:12px; overflow-x:auto; padding-bottom:8px;
+    scrollbar-width:thin; scrollbar-color:var(--border-2) transparent; }
+  .shots::-webkit-scrollbar { height:6px; }
+  .shots::-webkit-scrollbar-thumb { background:var(--border-2); }
+  .shot-btn { flex:none; padding:0; border:1px solid var(--border-2); background:var(--surface);
+    clip-path:var(--clip); cursor:zoom-in; line-height:0; position:relative;
+    transition:border-color .18s ease, box-shadow .18s ease, transform .18s ease; }
+  .shot-btn:hover { border-color:var(--primary); box-shadow:0 0 20px rgba(0,170,255,.18); transform:translateY(-2px); }
+  .shot-btn:focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
+  .shot-btn img { height:200px; width:auto; display:block; }
+  .shots-count { font-family:var(--mono); font-size:.7rem; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--faint); margin-bottom:9px; }
+
+  /* Lightbox. Fixed overlay above the scanline layer (z-index 9). */
+  .lb { position:fixed; inset:0; z-index:60; display:flex; flex-direction:column;
+    background:rgba(4,8,10,.94); backdrop-filter:blur(4px); }
+  .lb[hidden] { display:none; }
+  .lb-bar { display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 20px; border-bottom:1px solid var(--border);
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); }
+  .lb-stage { flex:1; min-height:0; display:flex; align-items:center; justify-content:center;
+    gap:14px; padding:18px 20px; }
+  .lb-stage img { max-width:100%; max-height:100%; object-fit:contain;
+    border:1px solid var(--border-2); clip-path:var(--clip); background:var(--surface); }
+  .lb-nav { flex:none; font-family:var(--mono); font-size:1.4rem; line-height:1; cursor:pointer;
+    background:var(--surface); border:1px solid var(--border); color:var(--secondary);
+    padding:14px 16px; clip-path:var(--clip-sm);
+    transition:color .18s ease, border-color .18s ease, background .18s ease; }
+  .lb-nav:hover { color:var(--primary); border-color:var(--border-2); background:var(--surface-2); text-shadow:var(--glow); }
+  .lb-nav:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .lb-nav[hidden] { display:none; }
+  .lb-close { font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase;
+    cursor:pointer; background:none; border:1px solid var(--border); color:var(--dim); padding:5px 11px;
+    clip-path:var(--clip-sm); }
+  .lb-close:hover { color:var(--primary); border-color:var(--border-2); text-shadow:var(--glow); }
+  .lb-close:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  @media (max-width:640px) { .lb-stage { padding:10px; gap:6px; } .lb-nav { padding:10px 11px; font-size:1.1rem; } }
 
   /* ── section pages (connect / publish) ── */
   .page { max-width:860px; display:flex; flex-direction:column; gap:18px; padding-top:16px; }
@@ -514,6 +553,95 @@
     return root;
   }
 
+  /* ── lightbox ──────────────────────────────────────────────────────────
+     One overlay reused for every gallery, built once and kept hidden. Built
+     lazily rather than in the markup so a page with no screenshots — which is
+     every page today — ships nothing for it.
+
+     Keyboard is not a nicety here: a gallery you can only drive with a mouse
+     is one most people cannot compare shots in. Escape closes, arrows move,
+     and focus returns to the thumbnail that opened it so the tab order does
+     not collapse to the top of the document. */
+  var lb = null;
+
+  function ensureLightbox() {
+    if (lb) return lb;
+    var root = el("div", "lb");
+    root.hidden = true;
+    root.setAttribute("role", "dialog");
+    root.setAttribute("aria-modal", "true");
+    root.setAttribute("aria-label", "Screenshot viewer");
+
+    var bar = el("div", "lb-bar");
+    var caption = el("span", null, "");
+    var close = el("button", "lb-close", "Close ✕");
+    close.type = "button";
+    bar.appendChild(caption);
+    bar.appendChild(close);
+
+    var stage = el("div", "lb-stage");
+    var prev = el("button", "lb-nav", "‹");
+    var next = el("button", "lb-nav", "›");
+    prev.type = "button"; next.type = "button";
+    prev.setAttribute("aria-label", "Previous screenshot");
+    next.setAttribute("aria-label", "Next screenshot");
+    var img = el("img");
+    stage.appendChild(prev); stage.appendChild(img); stage.appendChild(next);
+
+    root.appendChild(bar); root.appendChild(stage);
+    document.body.appendChild(root);
+
+    lb = { root: root, img: img, caption: caption, prev: prev, next: next,
+           urls: [], i: 0, name: "", opener: null };
+
+    var show = function (i) {
+      if (!lb.urls.length) return closeLb();
+      lb.i = (i + lb.urls.length) % lb.urls.length;   // wrap both ways
+      lb.img.src = lb.urls[lb.i];
+      lb.img.alt = lb.name + " screenshot " + (lb.i + 1);
+      lb.caption.textContent = lb.name + " — " + (lb.i + 1) + " / " + lb.urls.length;
+      var many = lb.urls.length > 1;
+      lb.prev.hidden = !many;
+      lb.next.hidden = !many;
+    };
+    lb.show = show;
+
+    prev.addEventListener("click", function () { show(lb.i - 1); });
+    next.addEventListener("click", function () { show(lb.i + 1); });
+    close.addEventListener("click", closeLb);
+    // Clicking the backdrop closes; clicking the image or a control does not.
+    root.addEventListener("click", function (ev) {
+      if (ev.target === root || ev.target === stage) closeLb();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (!lb || lb.root.hidden) return;
+      if (ev.key === "Escape")     { ev.preventDefault(); closeLb(); }
+      if (ev.key === "ArrowLeft")  { ev.preventDefault(); show(lb.i - 1); }
+      if (ev.key === "ArrowRight") { ev.preventDefault(); show(lb.i + 1); }
+    });
+    return lb;
+  }
+
+  function openLightbox(urls, index, name) {
+    if (!urls || !urls.length) return;
+    var v = ensureLightbox();
+    v.urls = urls.slice();
+    v.name = name || "";
+    v.opener = document.activeElement;
+    v.root.hidden = false;
+    v.show(index < 0 ? 0 : index);
+    v.next.hidden ? v.root.querySelector(".lb-close").focus() : v.next.focus();
+  }
+
+  function closeLb() {
+    if (!lb || lb.root.hidden) return;
+    lb.root.hidden = true;
+    lb.img.removeAttribute("src");
+    // Put focus back where it came from, not at the top of the page.
+    if (lb.opener && lb.opener.focus) lb.opener.focus();
+    lb.opener = null;
+  }
+
   /* ── card ───────────────────────────────────────────────────────────── */
   function card(e) {
     var root = el("div", "card");
@@ -715,14 +843,33 @@
     spec.appendChild(dl);
     d.appendChild(spec);
 
+    // ── screenshots ──────────────────────────────────────────────────
+    // A dead URL is likely: entries point at images on someone else's host
+    // and nothing in CI checks they still resolve. So a shot that fails to
+    // load removes itself from BOTH the strip and the lightbox's list,
+    // rather than leaving a broken-image glyph or a blank slide.
     var shots = (e.screenshots || []).map(safeUrl).filter(Boolean);
     if (shots.length) {
+      if (shots.length > 1) {
+        d.appendChild(el("div", "shots-count", shots.length + " screenshots"));
+      }
       var strip = el("div", "shots");
+      var live = [];
       shots.forEach(function (u) {
+        var btn = el("button", "shot-btn");
+        btn.type = "button";
+        btn.setAttribute("aria-label", "View screenshot " + (live.length + 1) + " of " + shots.length);
         var img = el("img");
-        img.src = u; img.alt = (e.name || e.id) + " screenshot"; img.loading = "lazy";
-        img.addEventListener("error", function () { img.remove(); });
-        strip.appendChild(img);
+        img.src = u; img.alt = ""; img.loading = "lazy";
+        img.addEventListener("error", function () {
+          btn.remove();
+          var i = live.indexOf(u);
+          if (i >= 0) live.splice(i, 1);
+        });
+        btn.appendChild(img);
+        btn.addEventListener("click", function () { openLightbox(live, live.indexOf(u), e.name || e.id); });
+        live.push(u);
+        strip.appendChild(btn);
       });
       d.appendChild(strip);
     }
