@@ -28,19 +28,22 @@ machine — because that is what it is.
 
 > **The store is not yet open to third-party submissions.**
 >
-> AuraOS's Nexus UI currently passes `autoApprove: true` when you install from
-> the Browse tab or update an app
-> (`apps/com.aura.nexus/src/pages/index.astro`, `app.astro`, `installed.astro`),
-> so a one-click install grants every tool and permission the app declares
-> **without showing you what they are**. The permission diff is computed
-> server-side and shown by the CLI, but not by the store UI.
+> The technical blocker is gone. The Nexus UI used to pass `autoApprove: true`
+> on every install and update, so a click granted every tool and permission an
+> app declared without naming them — and `docker` in an app's `tools[]` is
+> effectively host root via the socket. AuraOS now shows the server-computed
+> permission diff before any install or update, and privileged tools are called
+> out as such.
 >
-> That is acceptable while the only catalogue is your own. It is not acceptable
-> for a public store: `docker` in an app's `tools[]` is effectively host root via
-> the socket.
+> Staying closed is now a choice about **review capacity**, not about the OS.
+> Accepting submissions means someone reads every one, and this index has one
+> app and one maintainer. Opening it before there is a real answer to "who
+> reviews this, and how fast" would either stall submitters or wave things
+> through — and waving things through is precisely what the review is for.
 >
-> **Third-party submissions open once AuraOS surfaces the permission diff in the
-> Nexus UI before install.** Until then this index carries first-party apps only.
+> Still to settle before opening: a named security contact, a stated response
+> time for reports, and enforcement of id ownership (`scripts/validate.mjs`
+> does not yet cross-check `CODEOWNERS`).
 
 ## App ids and ownership
 

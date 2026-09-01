@@ -692,8 +692,8 @@
     }
     if (!apps.length) {
       viewEl.appendChild(state("", "Catalogue empty", "Nothing published yet", [
-        "The store is live but the index carries no apps — third-party submissions are not open while the AuraOS install flow still skips the permission diff.",
-        "The tooling, schema and review process are in place. When the gate lifts, entries land here the day their pull request merges."
+        "The store is live, but it is not yet open to submissions from outside — not for want of tooling, but because accepting them means someone reads every one.",
+        "The schema, validation and review process are in place, and entries land here the day their pull request merges."
       ], [
         { label: "Read the policy", href: REPO + "/blob/main/POLICY.md" },
         { label: "Submit an app", href: REPO + "/blob/main/CONTRIBUTING.md", primary: true }
@@ -964,7 +964,7 @@
     p.appendChild(how);
 
     var note = el("p", "note");
-    note.appendChild(document.createTextNode("Third-party submissions are not open yet — the AuraOS store UI still installs without showing you the permission diff, and we won't list other people's code until it does. The reasoning is in "));
+    note.appendChild(document.createTextNode("Submissions from outside are not open yet. AuraOS does now show you exactly what an app is granted before it installs; what is still missing is review capacity on this side. The reasoning is in "));
     note.appendChild(extLink(REPO + "/blob/main/POLICY.md", "POLICY.md"));
     note.appendChild(document.createTextNode("."));
     p.appendChild(note);
