@@ -9,7 +9,8 @@
 - [ ] I control this reverse-domain namespace (or the repository it names)
 - [ ] `node scripts/validate.mjs` passes locally
 - [ ] The source is public and the channel tags exist
-- [ ] Icon and screenshots are absolute `https://` URLs
+- [ ] Icon is a 1–3 character glyph (not a URL)
+- [ ] Screenshots are absolute `https://` URLs
 - [ ] I have read [POLICY.md](../POLICY.md)
 
 ## Capabilities
