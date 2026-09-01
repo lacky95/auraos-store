@@ -1,11 +1,15 @@
 id: io.lakner.hello
 name: Hello
-icon: HEL
 description: A minimal AuraOS example app — the reference for publishing to this store.
 publisher: Lukas Lakner
 homepage: https://github.com/lacky95/aura-hello
-categories: [utility]
-tags: [demo, example, hello]
+icon: HEL
+categories:
+  - utility
+tags:
+  - demo
+  - example
+  - hello
 sources:
   git:
     ref: github.com/lacky95/aura-hello
