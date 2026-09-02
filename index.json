@@ -17,6 +17,9 @@
         "example",
         "hello"
       ],
+      "screenshots": [
+        "https://nexus.aura.lakner.io/assets/io.lakner.hello/a30263c1a1c6.png"
+      ],
       "sources": {
         "git": {
           "ref": "github.com/lacky95/aura-hello",
