@@ -93,6 +93,30 @@ Commit all three files: your `apps/<id>.yaml` and both index files. Having them
 in the PR means a reviewer sees precisely what the published catalogue becomes,
 rather than trusting a post-merge job to produce the right thing.
 
+## Screenshots
+
+Screenshots are not part of a release — a better picture is not a new version —
+so they are managed on their own:
+
+```sh
+aura nexus app screenshots list    <your.app.id>
+aura nexus app screenshots add     <your.app.id> ./shot.png     # or an https URL
+aura nexus app screenshots replace <your.app.id> 2 ./better.png
+aura nexus app screenshots remove  <your.app.id> 2
+```
+
+Each opens a pull request touching only that entry's `screenshots`.
+
+**Pass a local file and the store hosts it for you.** This repository is the
+published site, so an uploaded image lands in `assets/<app-id>/` and is served
+from the store's own domain. That is usually better than linking to your own
+host: nothing here checks that an external URL still resolves, so a dead link
+becomes a broken picture on your listing.
+
+Images are checked by content, not by filename — PNG, JPEG, GIF or WebP, up to
+2 MB each, at most 8 per app. SVG is not accepted: it is a scriptable document
+rather than a bitmap, and these files are served from the store's origin.
+
 ## 4. Open the pull request
 
 CI will verify that:
