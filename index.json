@@ -31,6 +31,35 @@
           "git-tag": "v0.1.0"
         }
       }
+    },
+    {
+      "id": "io.lakner.hermes",
+      "name": "Hermes Agent",
+      "description": "Runs the Nous Research Hermes Agent as its own sibling container and surfaces its dashboard as an AuraOS window.",
+      "publisher": "Lakner",
+      "homepage": "https://github.com/lakner-io/auraos-app-hermes",
+      "icon": "HRM",
+      "categories": [
+        "developer"
+      ],
+      "tags": [
+        "agent",
+        "ai",
+        "hermes",
+        "nous",
+        "assistant"
+      ],
+      "sources": {
+        "git": {
+          "ref": "github.com/lakner-io/auraos-app-hermes",
+          "default-branch": "main"
+        }
+      },
+      "channels": {
+        "stable": {
+          "git-tag": "v0.2.0"
+        }
+      }
     }
   ],
   "featured": [],
