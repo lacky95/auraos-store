@@ -125,14 +125,6 @@
      own display:flex would otherwise win against. */
   .search[hidden] { display:none; }
 
-  /* ── one-line masthead: the store says what it is and moves on ── */
-  .masthead { border-bottom:1px solid var(--border); }
-  .masthead .in { max-width:var(--maxw); margin:0 auto; padding:20px 24px;
-    display:flex; align-items:baseline; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-  .masthead p { font-size:.92rem; color:var(--dim); }
-  .masthead b { color:var(--text); font-weight:600; }
-  .masthead .meta { font-family:var(--mono); font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); white-space:nowrap; }
-
   /* Must be `main.wrap`, not `main`: this element carries .wrap too, and a
      class selector outranks an element one - a bare `main { padding }` rule is
      silently overridden by .wrap's own padding and does nothing at all.
@@ -404,13 +396,6 @@
   </div>
 </div>
 
-<div class="masthead">
-  <div class="in">
-    <p>Apps, agents and capabilities for <b>AuraOS</b> — each sandboxed, each installed with one command.</p>
-    <span class="meta" id="masthead-meta">Curated · we host the catalogue, not the code</span>
-  </div>
-</div>
-
 <main class="wrap">
   <div id="view">
     <div class="panel brackets state">
@@ -461,7 +446,6 @@
   var navEl  = document.getElementById("nav");
   var qEl    = document.getElementById("q");
   var searchEl = document.querySelector(".search");
-  var metaEl = document.getElementById("masthead-meta");
 
   var apps = [], featured = [], categories = [], loadError = null;
   var activeCat = "", query = "";
@@ -990,10 +974,6 @@
     var searchable = r.name === "browse";
     searchEl.hidden = !searchable;
     qEl.disabled = !searchable || (!apps.length && !loadError);
-    metaEl.textContent = r.name === "browse" && apps.length
-      ? apps.length + (apps.length === 1 ? " app listed" : " apps listed")
-      : "Curated · we host the catalogue, not the code";
-
     Array.prototype.forEach.call(navEl.children, function (a) {
       var mine = a.getAttribute("data-route");
       if (mine === r.name || (mine === "browse" && r.name === "app")) a.setAttribute("aria-current", "page");
