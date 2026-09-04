@@ -1,0 +1,25 @@
+id: io.lakner.callgemini
+name: CallGemini
+description: Voice-first chat with Gemini Live — talk, see the dialog transcribed live, and wire in your own MCP tools.
+publisher: Lakner
+homepage: https://github.com/lakner-io/auraos-app-callgemini
+icon: CG
+categories:
+  - media
+tags:
+  - voice
+  - gemini
+  - ai
+  - chat
+  - mcp
+screenshots:
+  - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.callgemini/assets/Screenshot_callgemini_01.jpg
+  - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.callgemini/assets/Screenshot_callgemini_02.jpg
+  - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.callgemini/assets/Screenshot_callgemini_03.jpg
+sources:
+  git:
+    ref: github.com/lakner-io/auraos-app-callgemini
+    default-branch: main
+channels:
+  stable:
+    git-tag: v0.1.0

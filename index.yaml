@@ -3,9 +3,34 @@
 # Built from apps/*.yaml by scripts/build-index.mjs.
 # Edit the per-app file and open a PR; CI regenerates this on merge.
 #
-# apps: 2
+# apps: 3
 schema: 1
 apps:
+  - id: io.lakner.callgemini
+    name: CallGemini
+    description: Voice-first chat with Gemini Live — talk, see the dialog transcribed live, and wire in your own MCP tools.
+    publisher: Lakner
+    homepage: https://github.com/lakner-io/auraos-app-callgemini
+    icon: CG
+    categories:
+      - media
+    tags:
+      - voice
+      - gemini
+      - ai
+      - chat
+      - mcp
+    screenshots:
+      - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.callgemini/assets/Screenshot_callgemini_01.jpg
+      - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.callgemini/assets/Screenshot_callgemini_02.jpg
+      - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.callgemini/assets/Screenshot_callgemini_03.jpg
+    sources:
+      git:
+        ref: github.com/lakner-io/auraos-app-callgemini
+        default-branch: main
+    channels:
+      stable:
+        git-tag: v0.1.0
   - id: io.lakner.hello
     name: Hello
     description: A minimal AuraOS example app — the reference for publishing to this store.
