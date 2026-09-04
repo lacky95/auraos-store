@@ -811,7 +811,40 @@
     getOs.appendChild(g);
     d.appendChild(getOs);
 
-    /* Spec — every fact the entry carries, in one scan. */
+    // ── screenshots ──────────────────────────────────────────────────
+    // A dead URL is likely: entries point at images on someone else's host
+    // and nothing in CI checks they still resolve. So a shot that fails to
+    // load removes itself from BOTH the strip and the lightbox's list,
+    // rather than leaving a broken-image glyph or a blank slide.
+    var shots = (e.screenshots || []).map(safeUrl).filter(Boolean);
+    if (shots.length) {
+      if (shots.length > 1) {
+        d.appendChild(el("div", "shots-count", shots.length + " screenshots"));
+      }
+      var strip = el("div", "shots");
+      var live = [];
+      shots.forEach(function (u) {
+        var btn = el("button", "shot-btn");
+        btn.type = "button";
+        btn.setAttribute("aria-label", "View screenshot " + (live.length + 1) + " of " + shots.length);
+        var img = el("img");
+        img.src = u; img.alt = ""; img.loading = "lazy";
+        img.addEventListener("error", function () {
+          btn.remove();
+          var i = live.indexOf(u);
+          if (i >= 0) live.splice(i, 1);
+        });
+        btn.appendChild(img);
+        btn.addEventListener("click", function () { openLightbox(live, live.indexOf(u), e.name || e.id); });
+        live.push(u);
+        strip.appendChild(btn);
+      });
+      d.appendChild(strip);
+    }
+
+    /* Spec — every fact the entry carries, in one scan. Below the pictures:
+       someone deciding whether they want an app looks at it before they read
+       which branch it tracks. */
     var spec = el("div", "panel brackets spec");
     var dl = el("dl");
     function row(term_, build) {
@@ -843,36 +876,6 @@
     spec.appendChild(dl);
     d.appendChild(spec);
 
-    // ── screenshots ──────────────────────────────────────────────────
-    // A dead URL is likely: entries point at images on someone else's host
-    // and nothing in CI checks they still resolve. So a shot that fails to
-    // load removes itself from BOTH the strip and the lightbox's list,
-    // rather than leaving a broken-image glyph or a blank slide.
-    var shots = (e.screenshots || []).map(safeUrl).filter(Boolean);
-    if (shots.length) {
-      if (shots.length > 1) {
-        d.appendChild(el("div", "shots-count", shots.length + " screenshots"));
-      }
-      var strip = el("div", "shots");
-      var live = [];
-      shots.forEach(function (u) {
-        var btn = el("button", "shot-btn");
-        btn.type = "button";
-        btn.setAttribute("aria-label", "View screenshot " + (live.length + 1) + " of " + shots.length);
-        var img = el("img");
-        img.src = u; img.alt = ""; img.loading = "lazy";
-        img.addEventListener("error", function () {
-          btn.remove();
-          var i = live.indexOf(u);
-          if (i >= 0) live.splice(i, 1);
-        });
-        btn.appendChild(img);
-        btn.addEventListener("click", function () { openLightbox(live, live.indexOf(u), e.name || e.id); });
-        live.push(u);
-        strip.appendChild(btn);
-      });
-      d.appendChild(strip);
-    }
 
     var foot = el("p", "note");
     foot.appendChild(document.createTextNode("Listing is not vouching. We reviewed this entry's metadata and confirmed its source resolves — we did not audit the app's code, and its author can push a new tag at any time. "));
