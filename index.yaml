@@ -3,7 +3,7 @@
 # Built from apps/*.yaml by scripts/build-index.mjs.
 # Edit the per-app file and open a PR; CI regenerates this on merge.
 #
-# apps: 1
+# apps: 2
 schema: 1
 apps:
   - id: io.lakner.hello
@@ -27,6 +27,31 @@ apps:
     channels:
       stable:
         git-tag: v0.1.0
+  - id: io.lakner.hermes
+    name: Hermes Agent
+    description: Runs the Nous Research Hermes Agent as its own sibling container and surfaces its dashboard as an AuraOS window.
+    publisher: Lakner
+    homepage: https://github.com/lakner-io/auraos-app-hermes
+    icon: HRM
+    categories:
+      - developer
+    tags:
+      - agent
+      - ai
+      - hermes
+      - nous
+      - assistant
+    screenshots:
+      - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.hermes/assets/Screenshot_Hermes_01.jpg
+      - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.hermes/assets/Screenshot_Hermes_02.jpg
+      - https://cdn.lakner.io/files/auraos/nexus/apps/io.lakner.hermes/assets/Screenshot_Hermes_03.jpg
+    sources:
+      git:
+        ref: github.com/lakner-io/auraos-app-hermes
+        default-branch: main
+    channels:
+      stable:
+        git-tag: v0.2.1
 featured: []
 categories:
   - slug: system
