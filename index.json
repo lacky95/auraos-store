@@ -3,6 +3,35 @@
   "schema": 1,
   "apps": [
     {
+      "id": "dev.box",
+      "name": "DevBox",
+      "description": "Reproducible development workspaces for AuraOS: declare repositories, inspect checkouts, and bootstrap projects safely.",
+      "publisher": "Lakner",
+      "homepage": "https://github.com/lakner-io/auraos-app-devbox",
+      "icon": "DVX",
+      "categories": [
+        "developer"
+      ],
+      "tags": [
+        "developer",
+        "devbox",
+        "git",
+        "workspace",
+        "template"
+      ],
+      "sources": {
+        "git": {
+          "ref": "github.com/lakner-io/auraos-app-devbox",
+          "default-branch": "main"
+        }
+      },
+      "channels": {
+        "stable": {
+          "git-tag": "v0.2.0"
+        }
+      }
+    },
+    {
       "id": "io.lakner.callgemini",
       "name": "CallGemini",
       "description": "Voice-first chat with Gemini Live — talk, see the dialog transcribed live, and wire in your own MCP tools.",
