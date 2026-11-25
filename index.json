@@ -128,6 +128,35 @@
           "git-tag": "v0.2.1"
         }
       }
+    },
+    {
+      "id": "io.lakner.vscode",
+      "name": "VSCode",
+      "description": "Code orchestrator — grants the code-server capability to apps and embeds a per-app VS Code editor running inside each app's own sandbox",
+      "publisher": "Lakner",
+      "homepage": "https://github.com/lakner-io/auraos-app-vscode",
+      "icon": "VSC",
+      "categories": [
+        "developer"
+      ],
+      "tags": [
+        "developer",
+        "editor",
+        "vscode",
+        "code-server",
+        "workspace"
+      ],
+      "sources": {
+        "git": {
+          "ref": "github.com/lakner-io/auraos-app-vscode",
+          "default-branch": "main"
+        }
+      },
+      "channels": {
+        "stable": {
+          "git-tag": "v0.2.0"
+        }
+      }
     }
   ],
   "featured": [],
